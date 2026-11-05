@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHYSICS MASTER I - Trắc Nghiệm Vật Lý Đại Cương 1 TNUT
+    </title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        physics: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- KaTeX for Physics Formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(107, 114, 128, 0.8);
+        }
+
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .glow-blue {
+            box-shadow: 0 0 20px -3px rgba(14, 165, 233, 0.3);
+        }
+        .glow-green {
+            box-shadow: 0 0 20px -3px rgba(34, 197, 94, 0.4);
+        }
+        .glow-red {
+            box-shadow: 0 0 20px -3px rgba(239, 68, 68, 0.4);
+        }
+
+        .katex-display {
+            margin: 0.5em 0 !important;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 4px 0;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-300 flex flex-col justify-between selection:bg-physics-500 selection:text-white">
+
+    <!-- Fireworks Canvas Layer -->
+    <canvas id="fireworks-canvas"></canvas>
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 w-full glass-panel border-b transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="app.navHome()">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-physics-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-physics-500/30">
+                    <i class="fa-solid fa-atom"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-wider bg-gradient-to-r from-physics-500 to-indigo-500 bg-clip-text text-transparent">PHYSICS MASTER I</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Ngân Hàng Trắc Nghiệm Vật Lý 1 Chuẩn</p>
+                </div>
+            </div>
+
+            <!-- Controls (Sound, Theme, Home) -->
+            <div class="flex items-center gap-3">
+                <button id="sound-toggle" onclick="app.toggleSound()" class="p-2.5 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-300 transition-all" title="Bật/Tắt Âm Thanh">
+                    <i id="sound-icon" class="fa-solid fa-volume-high text-lg"></i>
+                </button>
+                <button id="theme-toggle" onclick="app.toggleTheme()" class="p-2.5 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-300 transition-all" title="Đổi Chế Độ Sáng/Tối">
+                    <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
+                </button>
+                <button onclick="app.navHome()" class="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-200/70 dark:bg-slate-800/70 hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">
+                    <i class="fa-solid fa-house"></i> Trang Chủ
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 sm:px-6">
+
+        <!-- VIEW 1: HOME & QUIZ CONFIGURATION -->
+        <section id="view-home" class="space-y-8 animate-fade-in">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl p-6 sm:p-10 bg-gradient-to-br from-physics-900 via-slate-900 to-indigo-950 text-white shadow-2xl border border-physics-500/20">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-physics-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-physics-500/20 text-physics-300 border border-physics-400/30">
+                        <i class="fa-solid fa-certificate text-amber-400"></i> Đầy đủ 100% Lý thuyết 5 Chương (1.1-1.10, 2.1-2.24, 3.1-3.19 & 3.22-3.27, 4.1-4.18, 5.1-5.26)
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                        Ôn luyện Trắc nghiệm <span class="bg-gradient-to-r from-sky-400 to-indigo-300 bg-clip-text text-transparent">Vật Lý Đại Cương 1</span>
+                    </h2>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Đã cập nhật toàn bộ lý thuyết chuẩn 100% từ Đề thi & Bài tập tính toán phong phú kèm công thức KaTeX sắc nét, pháo hoa ăn mừng và lời giải chi tiết.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Setup Form -->
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+                <h3 class="text-xl font-bold flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+                    <span class="flex items-center gap-3">
+                        <i class="fa-solid fa-sliders text-physics-500"></i> Tùy Chỉnh Chế Độ Ôn Luyện
+                    </span>
+                    <span id="pool-info-badge" class="text-xs font-semibold px-3 py-1 rounded-full bg-physics-500/10 text-physics-600 dark:text-physics-400 border border-physics-500/30">
+                        Loading...
+                    </span>
+                </h3>
+
+                <!-- Select Study Mode -->
+                <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        1. Chọn Phân Loại Câu Hỏi:
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="mode-options">
+                        <button type="button" onclick="app.setMode('ALL')" class="mode-btn p-3.5 rounded-2xl border text-xs sm:text-sm font-bold transition-all border-physics-500 bg-physics-500/10 text-physics-600 dark:text-physics-400 flex items-center justify-center gap-2" data-mode="ALL">
+                            <i class="fa-solid fa-layer-group"></i> Tất Cả (Lý Thuyết + Bài Tập)
+                        </button>
+                        <button type="button" onclick="app.setMode('THEORY')" class="mode-btn p-3.5 rounded-2xl border text-xs sm:text-sm font-semibold transition-all border-slate-200 dark:border-slate-800 hover:border-physics-400 flex items-center justify-center gap-2" data-mode="THEORY">
+                            <i class="fa-solid fa-book-open text-amber-500"></i> Chỉ Lý Thuyết Đề Thi
+                        </button>
+                        <button type="button" onclick="app.setMode('CALC')" class="mode-btn p-3.5 rounded-2xl border text-xs sm:text-sm font-semibold transition-all border-slate-200 dark:border-slate-800 hover:border-physics-400 flex items-center justify-center gap-2" data-mode="CALC">
+                            <i class="fa-solid fa-calculator text-emerald-500"></i> Chỉ Bài Tập Tính Toán
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Select Chapter -->
+                <div class="space-y-3">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        2. Chọn Chương Học:
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="chapter-options">
+                        <!-- Chapter Radio Buttons generated via JS -->
+                    </div>
+                </div>
+
+                <!-- Select Number of Questions -->
+                <div class="space-y-3 pt-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            3. Số Lượng Câu Hỏi:
+                        </label>
+                        <span id="active-limit-text" class="text-xs text-slate-500 dark:text-slate-400 italic">
+                            (Khả dụng: 120 câu)
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="question-count-options">
+                        <button type="button" onclick="app.setQuestionCount(10)" class="count-btn p-3 rounded-xl border text-sm text-center transition-all border-physics-500 bg-physics-500/10 text-physics-600 dark:text-physics-400 font-bold" data-count="10">
+                            10 Câu
+                        </button>
+                        <button type="button" onclick="app.setQuestionCount(20)" class="count-btn p-3 rounded-xl border text-sm text-center transition-all border-slate-300 dark:border-slate-700 hover:border-physics-400" data-count="20">
+                            20 Câu
+                        </button>
+                        <button type="button" onclick="app.setQuestionCount(50)" class="count-btn p-3 rounded-xl border text-sm text-center transition-all border-slate-300 dark:border-slate-700 hover:border-physics-400" data-count="50">
+                            50 Câu
+                        </button>
+                        <button type="button" onclick="app.setQuestionCount('ALL')" class="count-btn p-3 rounded-xl border text-sm text-center transition-all border-slate-300 dark:border-slate-700 hover:border-physics-400" data-count="ALL">
+                            Tất Cả
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Start Quiz Button -->
+                <div class="pt-4">
+                    <button onclick="app.startQuiz()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-physics-600 to-indigo-600 hover:from-physics-500 hover:to-indigo-500 text-white font-bold text-lg shadow-lg shadow-physics-500/30 hover:shadow-physics-500/50 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-play"></i> BẮT ĐẦU LÀM BÀI (<span id="btn-start-count">10 câu</span>)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chapter Overview Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-card p-5 rounded-2xl space-y-2">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-500 flex items-center justify-center font-bold text-sm">C1</div>
+                    <h4 class="font-bold text-sm">Chương I: Động Học Chất Điểm</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Lý thuyết 1.1-1.10. Vận tốc, gia tốc $a_t, a_n$, ném xiên/ngang, rơi tự do, tốc độ tức thời.</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl space-y-2">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold text-sm">C2-3</div>
+                    <h4 class="font-bold text-sm">Chương II-III: Động Lực Học & Vật Rắn</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Lý thuyết 2.1-2.24, 3.1-3.19, 3.22-3.27. ĐL Newton, quán tính, Momen quán tính $I$, momen lực $\tau$.</p>
+                </div>
+                <div class="glass-card p-5 rounded-2xl space-y-2">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-sm">C4-5</div>
+                    <h4 class="font-bold text-sm">Chương IV-V: Trường Thế & Nhiệt Học</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Lý thuyết 4.1-4.18, 5.1-5.26. Lực thế, bảo toàn cơ năng, khí lý tưởng, chu trình Carnot, entropy.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: ACTIVE QUIZ -->
+        <section id="view-quiz" class="hidden space-y-6">
+            <!-- Quiz Status Bar -->
+            <div class="glass-panel rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md">
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-between">
+                    <span id="quiz-chapter-tag" class="px-3 py-1 rounded-full text-xs font-semibold bg-physics-500/10 text-physics-600 dark:text-physics-400 border border-physics-500/20">
+                        Chương 1
+                    </span>
+                    <span class="text-sm font-medium text-slate-500 dark:text-slate-400">
+                        Câu <strong id="current-q-index" class="text-slate-900 dark:text-white font-bold">1</strong> / <span id="total-q-count">10</span>
+                    </span>
+                </div>
+
+                <!-- Timer & Live Score Badge -->
+                <div class="flex items-center gap-4 w-full sm:w-auto justify-end">
+                    <div class="flex items-center gap-2 text-amber-500 bg-amber-500/10 px-3.5 py-1.5 rounded-xl font-mono font-bold text-sm border border-amber-500/20">
+                        <i class="fa-regular fa-clock"></i>
+                        <span id="quiz-timer">00:00</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-xl font-semibold text-xs border border-emerald-500/20">
+                        <i class="fa-solid fa-check-double"></i>
+                        <span>Đúng: <strong id="live-score">0</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div id="quiz-progress-bar" class="bg-gradient-to-r from-physics-500 to-indigo-500 h-2 rounded-full transition-all duration-300 w-0"></div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl relative">
+                <div class="space-y-3">
+                    <h3 id="question-text" class="text-base sm:text-lg font-medium leading-relaxed text-slate-800 dark:text-slate-100">
+                        <!-- Loaded dynamically -->
+                    </h3>
+                </div>
+
+                <!-- Multiple Choice Options -->
+                <div id="options-container" class="space-y-3 pt-2">
+                    <!-- Loaded dynamically -->
+                </div>
+
+                <!-- Action Controls -->
+                <div class="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <button id="btn-submit-answer" onclick="app.checkAnswer()" class="px-6 py-3 rounded-xl bg-physics-600 hover:bg-physics-500 text-white font-semibold text-sm shadow-md shadow-physics-500/20 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i> Kiểm Tra Đáp Án
+                    </button>
+                    <button id="btn-next-question" onclick="app.nextQuestion()" class="hidden px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm shadow-md shadow-emerald-500/20 transition-all flex items-center gap-2">
+                        <span>Câu Tiếp Theo</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Instructor Explanation Box -->
+                <div id="explanation-box" class="hidden rounded-2xl p-5 sm:p-6 space-y-4 border transition-all animate-fade-in">
+                    <div class="flex items-center gap-2 font-bold text-sm uppercase tracking-wide text-amber-500">
+                        <i class="fa-solid fa-lightbulb text-amber-400"></i> CÁCH GIẢI & CÔNG THỨC TRỌNG TÂM
+                    </div>
+                    
+                    <div id="formula-container" class="bg-slate-900/90 text-sky-300 p-4 rounded-xl font-mono text-sm border border-sky-500/30 shadow-inner">
+                        <!-- KaTeX LaTeX Formula -->
+                    </div>
+
+                    <div id="explanation-text" class="text-xs sm:text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-2">
+                        <!-- Solution text -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: RESULTS SUMMARY & REVIEW -->
+        <section id="view-result" class="hidden space-y-8">
+            <div class="glass-panel rounded-3xl p-8 sm:p-10 text-center space-y-6 shadow-2xl relative overflow-hidden">
+                <div class="inline-flex p-4 rounded-full bg-physics-500/10 text-physics-500 text-4xl mb-2">
+                    <i id="result-icon" class="fa-solid fa-trophy text-amber-400"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-black">KẾT QUẢ BÀI THI VẬT LÝ 1</h2>
+                    <p id="result-chapter-name" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        Chương 1 đến 5
+                    </p>
+                </div>
+
+                <div class="flex justify-center items-center gap-2 my-4">
+                    <div class="text-6xl sm:text-7xl font-extrabold bg-gradient-to-r from-physics-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent" id="final-score">
+                        8.5
+                    </div>
+                    <span class="text-2xl font-bold text-slate-400">/ 10</span>
+                </div>
+
+                <div id="score-grade" class="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    Xuất Sắc!
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <div class="glass-card p-4 rounded-2xl">
+                        <span class="text-xs text-slate-400 font-medium block">Số Câu Đúng</span>
+                        <span id="stat-correct" class="text-xl font-extrabold text-emerald-500">8</span>
+                    </div>
+                    <div class="glass-card p-4 rounded-2xl">
+                        <span class="text-xs text-slate-400 font-medium block">Số Câu Sai</span>
+                        <span id="stat-wrong" class="text-xl font-extrabold text-rose-500">2</span>
+                    </div>
+                    <div class="glass-card p-4 rounded-2xl">
+                        <span class="text-xs text-slate-400 font-medium block">Thời Gian</span>
+                        <span id="stat-time" class="text-xl font-extrabold text-physics-500">08:42</span>
+                    </div>
+                    <div class="glass-card p-4 rounded-2xl">
+                        <span class="text-xs text-slate-400 font-medium block">Tỷ Lệ Đúng</span>
+                        <span id="stat-accuracy" class="text-xl font-extrabold text-purple-500">80%</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+                    <button onclick="app.retakeQuiz()" class="px-6 py-3.5 rounded-xl bg-physics-600 hover:bg-physics-500 text-white font-bold text-sm shadow-lg shadow-physics-500/30 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Làm Lại Bài Thi này
+                    </button>
+                    <button onclick="app.navHome()" class="px-6 py-3.5 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold text-sm transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-house"></i> Quay Về Trang Chủ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Detailed Answers Breakdown -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-physics-500"></i> Xem Chi Tiết Đáp Án & Lời Giải
+                    </h3>
+                    <div class="flex gap-2 text-xs font-semibold">
+                        <button onclick="app.filterReview('all')" id="filter-all" class="px-3 py-1 rounded-lg bg-physics-500 text-white">Tất Cả</button>
+                        <button onclick="app.filterReview('wrong')" id="filter-wrong" class="px-3 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-rose-500 hover:text-white transition-all">Chỉ Câu Sai</button>
+                    </div>
+                </div>
+
+                <div id="review-container" class="space-y-4">
+                    <!-- Detailed question items -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-panel mt-12 py-6 border-t text-center text-xs text-slate-500 dark:text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p>© 2026 Physics Master - Ngân Hàng Câu Hỏi & Bài Tập Chuẩn Giảng Viên Vật Lý 1.</p>
+            <p class="font-mono">Tích hợp đầy đủ 100% Lý thuyết 5 Chương & Hiệu ứng pháo hoa ăn mừng.</p>
+        </div>
+    </footer>
+
+    <!-- JS APPLICATION CODE -->
+    <script>
+        var app = null;
+
+        /**
+         * FULL QUESTION BANK WITH COMPLETE THEORY EXPANSION & CALCULATION EXERCISES
+         * Covers Theory: 1.1-1.10, 2.1-2.24, 3.1-3.19 & 3.22-3.27, 4.1-4.18, 5.1-5.26
+         * Plus Calculation Exercises (isTheory: false)
+         */
+        const QUESTION_BANK = [
+            // ==================== CHƯƠNG 1: ĐỘNG HỌC CHẤT ĐIỂM (LÝ THUYẾT 1.1 - 1.10) ====================
+            {
+                id: 101, chapter: 1, chapterName: "Chương 1: Động học chất điểm", isTheory: true,
+                question: "[1.1] Chọn câu trả lời đúng: Trong công thức của chuyển động thẳng chậm dần đều $v = v_0 + at$:",
+                options: ["A. $v$ luôn luôn dương", "B. $a$ luôn luôn dương", "C. $a$ luôn cùng dấu với $v$", "D. $a$ luôn ngược dấu với $v$"],
+                correctIndex: 3, formula: "a \\cdot v < 0 \\implies a \\text{ và } v \\text{ ngược dấu nhau trong chuyển động chậm dần đều}",
+                explanation: "Trong chuyển động thẳng chậm dần đều, gia tốc và vận tốc luôn ngược chiều nhau ($a \\cdot v < 0$), do đó $a$ và $v$ mang dấu trái ngược nhau."
+            },
+            {
+                id: 102, chapter: 1, chapterName: "Chương 1: Động học chất điểm", isTheory: true,
+                question: "[1.2] Chọn câu trả lời đúng: Trong công thức của chuyển động thẳng nhanh dần đều $v = v_0 + at$:",
+                options: ["A. $v$ luôn luôn dương", "B. $a$ luôn luôn dương", "C. $a$ luôn cùng dấu với $v$", "D. $a$ luôn ngược dấu với $v$"],
+                correctIndex: 2, formula: "a \\cdot v > 0 \\implies a \\text{ và } v \\text{ cùng dấu nhau trong chuyển động nhanh dần đều}",
+                explanation: "Trong chuyển động thẳng nhanh dần đều, gia tốc và vận tốc luôn cùng chiều nhau ($a \\cdot v > 0$), do đó $a$ và $v$ luôn cùng dấu nhau."
+            },
+            {
+                id: 103, chapter: 1, chapterName: "Chương 1: Động học chất điểm", isTheory: true,
+                question: "[1.3] Trong chuyển động tròn, gia tốc pháp tuyến của chất điểm có độ lớn được xác định bởi biểu thức nào sau đây?",
+                options: ["A. $a_n = v R$", "B. $a_n = \\frac{v^2}{R}$", "C. $a_n = \\frac{v}{R^2}$", "D. $a_n = \\omega R^2$"],
+                correctIndex: 1, formula: "a_n = \\frac{v^2}{R} = \\omega^2 R",
+                explanation: "Biểu thức độ lớn gia tốc pháp tuyến (hướng tâm) trong chuyển động tròn là $a_n = \\frac{v^2}{R} = \\omega^2 R$."
+            },
+            {
+                id: 104, chapter: 1, chapterName: "Chương 1: Động học chất điểm", isTheory: true,
+                question: "[1.4] Chọn câu trả lời SAI: Trong chuyển động thẳng nhanh dần đều, nếu chọn chiều dương là chiều chuyển động thì:",
+                options: [
+                    "A. Gia tốc là đại lượng véctơ cùng phương chiều với véctơ vận tốc",
+                    "B. Gia tốc là đại lượng véctơ cùng phương ngược chiều với véctơ vận tốc",
+                    "C. Gia tốc là đại lượng véctơ tiếp tuyến với quỹ đạo chuyển động",
+                    "D. Gia tốc là đại lượng véctơ có độ lớn $a$ là một hằng số dương"
+                ],
+                correctIndex: 1, formula: "a > 0, v > 0 \\implies \\vec{a} \\text{ cùng chiều với } \\vec{v}",
+                explanation: "Trong chuyển động nhanh dần đều, chọn chiều dương là chiều chuyển động thì gia tốc $\\vec{a}$ phải CÙNG chiều với $\\vec{v}$. Phát biểu B nói ngược chiều là SAI."
+            },
+            {
+                id: 105, chapter: 1, chapterName: "Chương 1: Động học chất điểm", isTheory: true,
+                question: "[1.5] Chọn câu trả lời SAI khi nói về sự rơi tự do của vật:",
+                options: [
+                    "A. Sự rơi tự do là sự rơi của các vật trong chân không, chỉ dưới tác dụng của trọng lực",
+                    "B. Các vật rơi tự do tại cùng một nơi thì gia tốc như nhau",
+                    "C. Trong quá trình rơi tự do vận tốc giảm dần theo thời gian",
+                    "D. Trong quá trình rơi tự do gia tốc của vật không đổi cả về hướng và độ lớn"
+                ],
+                correctIndex: 2, formula: "v = g t \\quad (v \\text{ tăng dần đều theo thời gian})",
+                explanation: "Rơi tự do là chuyển động nhanh dần đều với vận tốc $v = gt$ tăng dần theo thời gian. Khẳng định C 'vận tốc giảm dần' là SAI."
+            },
+            {
+                id: 106, chapter: 1, chapterName: "Chương 1: Động học chất điểm", isTheory: true,
+                question: "[1.6] Chọn câu trả lời ĐÚNG khi nói về vận tốc trong chuyển động cong:",
+                options: [
+                    "A. Véctơ vận tốc tức thời tại mỗi điểm trên quỹ đạo có phương trùng với phương của tiếp tuyến với quỹ đạo tại điểm đó",
+                    "B. Véctơ vận tốc tức thời tại mỗi điểm trên quỹ đạo có phương vuông góc với phương tiếp tuyến",
+                    "C. Phương của véctơ vận tốc không đổi theo thời gian",
+                    "D. Trong quá trình chuyển động vận tốc luôn có giá trị dương"
+                ],
+                correctIndex: 0, formula: "\\vec{v} = \\frac{d\\vec{r}}{dt} \\quad (\\text{Có phương tiếp tuyến với quỹ đạo})",
+                explanation: "Trong chuyển động cong, phương của vectơ vận tốc tức thời $\\vec{v}$ tại mỗi điểm luôn nằm trên đường tiếp tuyến với quỹ đạo tại điểm đó."
+            },
+            {
+                id: 107, chapter: 1, chapterName: "Chương 1: Động học chất điểm", isTheory: true,
+                question: "[1.7] Phát biểu nào sau đây chỉ tốc độ tức thời?",
+                options: [
+                    "A. Ôtô chuyển động từ A đến B với tốc độ $40\\,\\text{km/h}$",
+                    "B. Vận động viên chạm đích với tốc độ $10\\,\\text{m/s}$",
+                    "C. Xe máy chuyển động với tốc độ $30\\,\\text{km/h}$ trong thời gian 2 giờ thì đến TPHCM",
+                    "D. Tốc độ của người đi bộ là $5\\,\\text{km/h}$"
+                ],
+                correctIndex: 1, formula: "v_{tt} = \\lim_{\\Delta t \\to 0} \\frac{\\Delta s}{\\Delta t}",
+                explanation: "Tốc độ tại thời điểm chạm đích ($10\\,\\text{m/s}$) là tốc độ đo được ngay tại khoảnh khắc đó, tức tốc độ tức thời."
+            },
+            {
+                id: 108, chapter: 1, chapterName: "Chương 1: Động học chất điểm", isTheory: true,
+                question: "[1.8] Một vật được ném xiên trong trường trọng lực, bỏ qua sức cản không khí. Tại điểm cao nhất của quỹ đạo:",
+                options: [
+                    "A. Vận tốc và gia tốc đều bằng không",
+                    "B. Vận tốc bằng không nhưng gia tốc khác không",
+                    "C. Thành phần vận tốc thẳng đứng bằng không",
+                    "D. Gia tốc bằng không nhưng vận tốc khác không"
+                ],
+                correctIndex: 2, formula: "v_y = 0, \\quad v = v_x = v_0 \\cos\\alpha, \\quad a = g \\ne 0",
+                explanation: "Tại đỉnh cao nhất, thành phần vận tốc theo phương thẳng đứng $v_y = 0$. Vật vẫn có vận tốc ngang $v_x = v_0 \\cos\\alpha$ và gia tốc $g$."
+            },
+            {
+                id: 109, chapter: 1, chapterName: "Chương 1: Động học chất điểm", isTheory: true,
+                question: "[1.9] Hai viên bi sắt ở cùng một độ cao, viên A thả rơi tự do, viên B bắn theo phương ngang. Bỏ qua sức cản không khí thì:",
+                options: [
+                    "A. Viên A chạm đất trước",
+                    "B. Viên B chạm đất trước",
+                    "C. Hai viên bi chạm đất cùng lúc",
+                    "D. Viên có khối lượng lớn hơn chạm đất trước"
+                ],
+                correctIndex: 2, formula: "t = \\sqrt{\\frac{2h}{g}} \\quad (\\text{Phụ thuộc độ cao } h \\text{ và } g, \\text{ không phụ thuộc } v_{0x})",
+                explanation: "Cả hai vật đều có chuyển động rơi tự do theo phương thẳng đứng với thời gian rơi $t = \\sqrt{2h/g}$ như nhau, nên chúng chạm đất cùng lúc."
+            },
+            {
+                id: 110, chapter: 1, chapterName: "Chương 1: Động học chất điểm", isTheory: true,
+                question: "[1.10] Chọn phát biểu ĐÚNG về chuyển động của viên đạn sau khi ra khỏi nòng súng (bỏ qua sức cản không khí):",
+                options: [
+                    "A. Tầm xa của đạn sẽ lớn nhất nếu nòng súng nằm ngang",
+                    "B. Tầm xa của đạn sẽ lớn nhất nếu nòng súng nghiêng góc $60^\\circ$ so với phương ngang",
+                    "C. Nếu mục tiêu (ở mặt đất) nằm trong tầm bắn thì có 2 góc ngắm để trúng đích",
+                    "D. Độ cao cực đại mà viên đạn đạt được sẽ lớn nhất khi nòng súng nghiêng góc $45^\\circ$"
+                ],
+                correctIndex: 2, formula: "L = \\frac{v_0^2 \\sin(2\\alpha)}{g} \\implies \\sin(2\\alpha) = \\sin(2\\alpha') \\implies \\alpha' = 90^\\circ - \\alpha",
+                explanation: "Với mục tiêu nằm trong tầm xa cực đại, luôn tồn tại 2 góc ném phụ nhau (ví dụ $30^\\circ$ và $60^\\circ$) cho cùng một tầm xa $L$."
+            },
+
+            // ==================== CHƯƠNG 2: ĐỘNG LỰC HỌC CHẤT ĐIỂM (LÝ THUYẾT 2.1 - 2.24) ====================
+            {
+                id: 201, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.1] Phát biểu nào sau đây là SAI?",
+                options: [
+                    "A. Quán tính là xu hướng bảo toàn gia tốc của vật",
+                    "B. Khối lượng đặc trưng cho mức quán tính",
+                    "C. Định luật I Newton còn gọi là định luật quán tính",
+                    "D. Chuyển động thẳng đều được gọi là chuyển động theo quán tính"
+                ],
+                correctIndex: 0, formula: "\\text{Quán tính là xu hướng bảo toàn VẬN TỐC } \\vec{v}",
+                explanation: "Quán tính là tính chất bảo toàn VẬN TỐC (trạng thái đứng yên hoặc chuyển động thẳng đều) chứ không phải bảo toàn gia tốc. A là phát biểu SAI."
+            },
+            {
+                id: 202, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.2] Trọng lực có đặc điểm nào sau đây?",
+                options: [
+                    "A. Luôn có chiều hướng về tâm của Trái Đất",
+                    "B. Phụ thuộc vào tọa độ địa lý",
+                    "C. Có biểu thức $\\vec{P} = m\\vec{g}$, với $m$ là khối lượng và $g$ là gia tốc trọng trường",
+                    "D. Tất cả đều là các đặc điểm của trọng lực"
+                ],
+                correctIndex: 3, formula: "\\vec{P} = m\\vec{g}",
+                explanation: "Tất cả các đáp án A, B, C đều miêu tả đúng thuộc tính của trọng lực."
+            },
+            {
+                id: 203, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.3] Theo Định luật III Newton, lực và phản lực KHÔNG có đặc điểm nào sau đây?",
+                options: ["A. Cùng bản chất", "B. Cùng tồn tại và cùng mất đi đồng thời", "C. Cùng điểm đặt", "D. Cùng phương nhưng ngược chiều"],
+                correctIndex: 2, formula: "\\vec{F}_{12} = -\\vec{F}_{21} \\quad (\\text{Đặt vào 2 vật KHÁC NHAU})",
+                explanation: "Lực và phản lực luôn đặt vào hai vật khác nhau tương tác, không thể có cùng điểm đặt."
+            },
+            {
+                id: 204, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.4] Phát biểu nào sau đây là ĐÚNG?",
+                options: [
+                    "A. Trọng lượng là đại lượng đặc trưng cho mức độ quán tính của vật",
+                    "B. Khi hai xe va chạm, xe nhỏ hơn sẽ chịu lực tác dụng mạnh hơn",
+                    "C. Gia tốc của vật luôn tỉ lệ nghịch với khối lượng",
+                    "D. Đội kéo co chiến thắng là đội tác dụng một lực lớn hơn vào mặt đất"
+                ],
+                correctIndex: 3, formula: "F_{dat} > F_{doi\\,ban}",
+                explanation: "Trong trò chơi kéo co, lực tác dụng giữa hai đội lên dây là bằng nhau (ĐL III Newton). Đội thắng là đội đạp mặt đất mạnh hơn để nhận lực ma sát nghỉ lớn hơn từ đất."
+            },
+            {
+                id: 205, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.5] Phát biểu nào sau đây là ĐÚNG?",
+                options: [
+                    "A. Lực và phản lực có chung điểm đặt",
+                    "B. Cặp lực trực đối thì triệt tiêu nhau",
+                    "C. Cặp lực trực đối thì luôn ngược hướng",
+                    "D. Lực pháp tuyến và trọng lực là hai lực trực đối của nhau"
+                ],
+                correctIndex: 2, formula: "\\vec{F}_1 = -\\vec{F}_2 \\implies \\vec{F}_1 \\text{ và } \\vec{F}_2 \\text{ ngược hướng}",
+                explanation: "Hai lực trực đối theo định nghĩa là hai lực cùng phương, cùng độ lớn và ngược hướng (ngược chiều)."
+            },
+            {
+                id: 206, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.6] Động lượng của một hệ chất điểm KHÔNG có đặc điểm nào sau đây?",
+                options: [
+                    "A. Là tổng động lượng của các chất điểm trong hệ",
+                    "B. Không thay đổi theo thời gian, nếu hệ kín",
+                    "C. Đạo hàm của nó theo thời gian bằng tổng các ngoại lực tác dụng lên hệ",
+                    "D. Đặc trưng cho tính chất nhanh, chậm của khối tâm của hệ"
+                ],
+                correctIndex: 3, formula: "\\vec{P} = M \\vec{v}_{kt} \\quad (\\text{Đặc trưng cho trạng thái chuyển động của khối tâm})",
+                explanation: "Động lượng đặc trưng cho mức độ truyền chuyển động chứ không chỉ tốc độ nhanh chậm đơn thuần. D là phát biểu không chính xác."
+            },
+            {
+                id: 207, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.7] Trong biểu thức của Định luật II Newton $\\vec{a} = \\frac{\\vec{F}}{m}$, trong đó $\\vec{F}$ là:",
+                options: [
+                    "A. Tổng hợp ngoại lực tác dụng lên vật",
+                    "B. Là trọng lực",
+                    "C. Là lực đẩy tác dụng lên vật",
+                    "D. Là lực kéo tác dụng lên vật"
+                ],
+                correctIndex: 0, formula: "\\vec{F} = \\sum \\vec{F}_{ngoai}",
+                explanation: "Trong phương trình Định luật II Newton, $\\vec{F}$ đại diện cho hợp lực (tổng tất cả ngoại lực) tác dụng lên vật."
+            },
+            {
+                id: 208, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.8] Đại lượng đặc trưng cho mức quán tính của một vật là:",
+                options: ["A. Trọng lượng", "B. Khối lượng", "C. Vận tốc", "D. Lực"],
+                correctIndex: 1, formula: "m = \\frac{F}{a}",
+                explanation: "Khối lượng $m$ là thước đo mức quán tính của vật: vật có khối lượng càng lớn càng khó thay đổi vận tốc."
+            },
+            {
+                id: 209, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.9] Điều nào sau đây là SAI khi nói về lực và phản lực?",
+                options: [
+                    "A. Lực và phản lực luôn xuất hiện và mất đi đồng thời",
+                    "B. Lực và phản lực luôn đặt vào hai vật khác nhau",
+                    "C. Lực và phản lực luôn cùng hướng với nhau",
+                    "D. Lực và phản lực không cân bằng nhau"
+                ],
+                correctIndex: 2, formula: "\\vec{F}_{12} = -\\vec{F}_{21} \\quad (\\text{Ngược hướng})",
+                explanation: "Lực và phản lực luôn NGƯỢC HƯỚNG nhau. Khẳng định C 'cùng hướng' là SAI."
+            },
+            {
+                id: 210, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.10] Chọn câu phát biểu SAI:",
+                options: [
+                    "A. Động lượng của vật là đại lượng đặc trưng cho khả năng truyền chuyển động của vật",
+                    "B. Động lượng là đại lượng véctơ đo bằng tích giữa khối lượng và véctơ vận tốc",
+                    "C. Véctơ động lượng của vật luôn cùng phương, cùng chiều với véctơ vận tốc",
+                    "D. Véctơ động lượng của vật luôn cùng phương, ngược chiều với véctơ vận tốc"
+                ],
+                correctIndex: 3, formula: "\\vec{p} = m \\vec{v} \\quad (m > 0 \\implies \\vec{p} \\text{ cùng chiều } \\vec{v})",
+                explanation: "Vì $m > 0$, vectơ động lượng $\\vec{p} = m\\vec{v}$ phải CÙNG CHUYỀN với $\\vec{v}$. Khẳng định D 'ngược chiều' là SAI."
+            },
+            {
+                id: 211, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.11] Theo Định luật II Newton, khi hợp lực tác dụng lên vật khác không, vectơ gia tốc của vật:",
+                options: [
+                    "A. Cùng hướng với hợp lực tác dụng lên vật",
+                    "B. Luôn cùng hướng với vận tốc của vật",
+                    "C. Luôn ngược hướng với vận tốc của vật",
+                    "D. Vuông góc với hợp lực tác dụng lên vật"
+                ],
+                correctIndex: 0, formula: "\\vec{a} = \\frac{\\vec{F}}{m} \\implies \\vec{a} \\text{ cùng hướng với } \\vec{F}",
+                explanation: "Gia tốc $\\vec{a}$ luôn cùng phương, cùng hướng với hợp ngoại lực $\\vec{F}$ gây ra gia tốc đó."
+            },
+            {
+                id: 212, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.12] Đặc điểm nào sau đây KHÔNG PHẢI của lực ma sát trượt?",
+                options: [
+                    "A. Xuất hiện khi vật trượt trên bề mặt vật khác",
+                    "B. Luôn ngược chiều với chiều chuyển động tương đối",
+                    "C. Tỉ lệ với áp lực vuông góc với mặt tiếp xúc",
+                    "D. Luôn cân bằng với thành phần tiếp tuyến với mặt tiếp xúc của ngoại lực"
+                ],
+                correctIndex: 3, formula: "F_{mst} = \\mu N",
+                explanation: "Lực ma sát trượt có độ lớn $F_{mst} = \\mu N$ không phụ thuộc vào độ lớn ngoại lực tiếp tuyến. Đặc điểm D là của ma sát nghỉ."
+            },
+            {
+                id: 213, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.13] Một vật đặt nằm yên trên mặt bàn nằm ngang. Phản lực của trọng lực $\\vec{P}$ tác dụng lên vật là lực nào?",
+                options: [
+                    "A. Phản lực $N$ của mặt bàn",
+                    "B. Áp lực $Q$ mà vật đè lên bàn",
+                    "C. Lực ma sát giữa mặt bàn và vật",
+                    "D. Lực mà vật hút Trái Đất"
+                ],
+                correctIndex: 3, formula: "\\vec{P} = -\\vec{F}_{hut\\,TD}",
+                explanation: "Trọng lực $\\vec{P}$ là lực Trái Đất hút vật. Theo ĐL III Newton, phản lực trực đối của nó là lực vật hút Trái Đất."
+            },
+            {
+                id: 214, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.14] Các giọt mưa rơi được xuống đất là do nguyên nhân nào sau đây?",
+                options: ["A. Quán tính", "B. Lực đẩy Ác-si-mét của không khí", "C. Lực hấp dẫn của Trái Đất", "D. Gió"],
+                correctIndex: 2, formula: "P = G \\frac{M m}{R^2}",
+                explanation: "Trọng lực (chính là lực hấp dẫn của Trái Đất tác dụng lên giọt mưa) kéo giọt mưa rơi xuống."
+            },
+            {
+                id: 215, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.15] Trường hợp nào sau đây vật chịu tác dụng của lực ma sát nghỉ?",
+                options: [
+                    "A. Vật đứng yên trên mặt đường, không có xu hướng chuyển động",
+                    "B. Vật đứng yên trên mặt đường, nhưng có xu hướng chuyển động",
+                    "C. Vật trượt đều trên mặt đường",
+                    "D. Cả ba trường hợp đều xuất hiện lực ma sát nghỉ"
+                ],
+                correctIndex: 1, formula: "F_{msn} = F_{kt} \\quad (\\text{Cân bằng ngoại lực gây xu hướng trượt})",
+                explanation: "Lực ma sát nghỉ chỉ xuất hiện khi vật đứng yên nhưng chịu ngoại lực tác dụng gây ra xu hướng muốn chuyển động."
+            },
+            {
+                id: 216, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.16] Động lượng của một chất điểm KHÔNG có đặc điểm nào sau đây?",
+                options: [
+                    "A. Là một vectơ bằng tích của khối lượng với vectơ vận tốc",
+                    "B. Luôn tiếp tuyến với quỹ đạo và hướng theo chiều chuyển động",
+                    "C. Không thay đổi, khi chất điểm va chạm với chất điểm khác",
+                    "D. Có đơn vị đo là $\\text{kg}\\cdot\\text{m/s}$"
+                ],
+                correctIndex: 2, formula: "\\Delta \\vec{p} = \\int \\vec{F}_{ng} dt",
+                explanation: "Khi va chạm với chất điểm khác, lực tương tác sinh ra làm vận tốc thay đổi nên động lượng của riêng chất điểm đó thay đổi (chỉ có động lượng tổng của HỆ KÍN mới không đổi). C là câu SAI."
+            },
+            {
+                id: 217, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.17] Một người có khối lượng $55\\,\\text{kg}$ đứng trên mặt đất. Lực mà mặt đất tác dụng lên người đó có độ lớn xấp xỉ:",
+                options: ["A. Bằng $550\\,\\text{N}$ (lấy $g = 10\\,\\text{m/s}^2$)", "B. Nhỏ hơn $500\\,\\text{N}$", "C. Lớn hơn $1000\\,\\text{N}$", "D. Bằng $0\\,\\text{N}$"],
+                correctIndex: 0, formula: "N = P = m g = 55 \\times 10 = 550\\,\\text{N}",
+                explanation: "Khi đứng yên cân bằng trên mặt đất, phản lực của mặt đất nâng người cân bằng với trọng lực $P = mg = 550\\,\\text{N}$."
+            },
+            {
+                id: 218, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.18] Trong chuyển động thẳng chậm dần đều thì hợp lực tác dụng vào vật:",
+                options: [
+                    "A. Cùng chiều với chuyển động",
+                    "B. Cùng chiều với chuyển động và có độ lớn không đổi",
+                    "C. Ngược chiều với chuyển động và có độ lớn nhỏ dần",
+                    "D. Ngược chiều với chuyển động và có độ lớn không đổi"
+                ],
+                correctIndex: 3, formula: "\\vec{F} = m \\vec{a} \\quad (\\vec{a} \\text{ ngược chiều } \\vec{v} \\text{ và } a = \\text{const})",
+                explanation: "Chậm dần đều có gia tốc $a$ không đổi và ngược chiều vận tốc, do đó hợp lực $F = ma$ có độ lớn không đổi và ngược chiều chuyển động."
+            },
+            {
+                id: 219, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.19] Phân tích lực $F$ thành 2 lực thành phần $F_1$ và $F_2$ vuông góc với nhau. Biết độ lớn của $F = 500\\,\\text{N}$, $F_1 = 300\\,\\text{N}$, độ lớn của $F_2$ là:",
+                options: ["A. $200\\,\\text{N}$", "B. $400\\,\\text{N}$", "C. $350\\,\\text{N}$", "D. $450\\,\\text{N}$"],
+                correctIndex: 1, formula: "F = \\sqrt{F_1^2 + F_2^2} \\implies F_2 = \\sqrt{500^2 - 300^2} = 400\\,\\text{N}",
+                explanation: "Theo định lý Pythagoras: $F_2 = \\sqrt{F^2 - F_1^2} = \\sqrt{500^2 - 300^2} = 400\\,\\text{N}$."
+            },
+            {
+                id: 220, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.20] Cho hai lực tác dụng có độ lớn $3\\,\\text{N}$ và $5\\,\\text{N}$. Trường hợp nào có hợp lực nhỏ nhất?",
+                options: [
+                    "A. Hai lực cùng phương, ngược chiều nhau (hợp lực $2\\,\\text{N}$)",
+                    "B. Hai lực vuông góc nhau (hợp lực $\\sqrt{34}\\,\\text{N}$)",
+                    "C. Hai lực hợp với nhau góc nhọn",
+                    "D. Hai lực cùng phương, cùng chiều nhau (hợp lực $8\\,\\text{N}$)"
+                ],
+                correctIndex: 0, formula: "F_{min} = |F_1 - F_2| = |3 - 5| = 2\\,\\text{N}",
+                explanation: "Hợp lực nhỏ nhất khi hai lực thành phần cùng phương nhưng ngược chiều nhau."
+            },
+            {
+                id: 221, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.21] Cho hai lực tác dụng có độ lớn $3\\,\\text{N}$ và $5\\,\\text{N}$. Trường hợp nào có hợp lực lớn nhất?",
+                options: [
+                    "A. Hai lực cùng phương, ngược chiều nhau",
+                    "B. Hai lực vuông góc nhau",
+                    "C. Hai lực hợp với nhau góc $60^\\circ$",
+                    "D. Hai lực cùng phương, cùng chiều nhau (hợp lực $8\\,\\text{N}$)"
+                ],
+                correctIndex: 3, formula: "F_{max} = F_1 + F_2 = 3 + 5 = 8\\,\\text{N}",
+                explanation: "Hợp lực đạt giá trị cực đại khi hai lực cùng phương và cùng chiều."
+            },
+            {
+                id: 222, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.22] Cho 2 lực đồng quy có độ lớn $300\\,\\text{N}$. Hỏi góc giữa 2 lực bằng bao nhiêu thì hợp lực cũng có độ lớn bằng $300\\,\\text{N}$?",
+                options: ["A. $0^\\circ$", "B. $90^\\circ$", "C. $120^\\circ$", "D. $180^\\circ$"],
+                correctIndex: 2, formula: "F = 2 F_1 \\cos(\\alpha / 2) \\implies 300 = 2(300) \\cos(\\alpha/2) \\implies \\alpha = 120^\\circ",
+                explanation: "Khi góc giữa hai lực bằng nhau là $120^\\circ$, ba vectơ lực tạo thành một tam giác đều nên độ lớn hợp lực đúng bằng độ lớn hai lực thành phần."
+            },
+            {
+                id: 223, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.23] Tác dụng vào một vật đồng thời hai lực $F_1 = 30\\,\\text{N}$ và $F_2 = 40\\,\\text{N}$. Nhận xét nào sau đây là ĐÚNG?",
+                options: [
+                    "A. Hợp lực tác dụng lên vật có độ lớn $70\\,\\text{N}$",
+                    "B. Hợp lực tác dụng lên vật có độ lớn $10\\,\\text{N}$",
+                    "C. Hợp lực tác dụng lên vật có độ lớn $50\\,\\text{N}$",
+                    "D. Chưa tính được độ lớn của tổng hợp lực khi chưa biết góc giữa hai lực"
+                ],
+                correctIndex: 3, formula: "|F_1 - F_2| \\le F \\le F_1 + F_2",
+                explanation: "Độ lớn hợp lực phụ thuộc vào góc $\\alpha$ giữa hai lực. Do chưa cho góc $\\alpha$ nên chưa xác định được giá trị chính xác của hợp lực."
+            },
+            {
+                id: 224, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: true,
+                question: "[2.24] Cho hai lực đồng quy có độ lớn $F_1 = F_2 = 30\\,\\text{N}$. Góc tạo bởi hai vectơ lực là $120^\\circ$. Độ lớn của hợp lực là:",
+                options: ["A. $60\\,\\text{N}$", "B. $30\\sqrt{3}\\,\\text{N}$", "C. $30\\,\\text{N}$", "D. $15\\,\\text{N}$"],
+                correctIndex: 2, formula: "F = \\sqrt{F_1^2 + F_2^2 + 2 F_1 F_2 \\cos 120^\\circ} = 30\\,\\text{N}",
+                explanation: "Áp dụng công thức cộng lực góc $120^\\circ$: $F = \\sqrt{30^2 + 30^2 + 2(30)(30)(-0.5)} = 30\\,\\text{N}$."
+            },
+
+            // ==================== CHƯƠNG 3: CƠ HỌC VẬT RẮN (LÝ THUYẾT 3.1-3.19 & 3.22-3.27) ====================
+            {
+                id: 301, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.1] Khi vật rắn quay quanh trục $\\Delta$ cố định với vận tốc góc $\\omega$ thì các điểm trên vật rắn sẽ vạch ra:",
+                options: [
+                    "A. Các đường tròn đồng tâm với cùng vận tốc góc $\\omega$",
+                    "B. Các đường tròn đồng trục $\\Delta$ với cùng vận tốc góc $\\omega$",
+                    "C. Các dạng quỹ đạo khác nhau",
+                    "D. Các đường tròn đồng trục $\\Delta$ với các vận tốc góc khác nhau"
+                ],
+                correctIndex: 1, formula: "\\omega_A = \\omega_B = \\omega \\quad (\\text{Đồng trục } \\Delta)",
+                explanation: "Trong chuyển động quay quanh trục cố định, mọi điểm không nằm trên trục quay đều vạch ra các đường tròn có tâm nằm trên trục quay với cùng vận tốc góc $\\omega$."
+            },
+            {
+                id: 302, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.2] Khi vật rắn chỉ có chuyển động tịnh tiến thì có tính chất nào sau đây?",
+                options: [
+                    "A. Các điểm trên vật rắn đều không có cùng một dạng quỹ đạo",
+                    "B. Các điểm trên vật rắn đều có cùng vectơ vận tốc tại mọi thời điểm",
+                    "C. Gia tốc của một điểm bất kỳ khác với gia tốc khối tâm",
+                    "D. Tất cả các phương án đều đúng"
+                ],
+                correctIndex: 1, formula: "\\vec{v}_A(t) = \\vec{v}_B(t) = \\vec{v}_{kt}(t)",
+                explanation: "Chuyển động tịnh tiến có đặc điểm: mọi điểm của vật rắn có cùng quỹ đạo dạng như nhau và tại mỗi thời điểm có cùng vectơ vận tốc $\\vec{v}$."
+            },
+            {
+                id: 303, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.3] Chuyển động lăn của bánh xe đạp trên mặt phẳng ngang là dạng chuyển động:",
+                options: [
+                    "A. Tịnh tiến",
+                    "B. Quay quanh trục bánh xe",
+                    "C. Tròn",
+                    "D. Tịnh tiến của trục bánh xe và quay của bánh xe quanh trục"
+                ],
+                correctIndex: 3, formula: "\\text{Chuyển động phức hợp} = \\text{Tịnh tiến} + \\text{Quay}",
+                explanation: "Chuyển động lăn không trượt là sự kết hợp giữa chuyển động tịnh tiến của trục bánh xe và chuyển động quay của bánh xe quanh trục đó."
+            },
+            {
+                id: 304, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.4] Thành phần lực nào thực sự có tác dụng làm vật rắn quay quanh trục?",
+                options: [
+                    "A. Thành phần lực cắt trục quay",
+                    "B. Thành phần lực song song với trục quay",
+                    "C. Không có thành phần nào",
+                    "D. Thành phần lực tiếp tuyến với quỹ đạo chuyển động (vuông góc với bán kính và trục quay)"
+                ],
+                correctIndex: 3, formula: "\\tau = F_t \\cdot r",
+                explanation: "Chỉ thành phần lực vuông góc với mặt phẳng chứa trục quay và điểm đặt (thành phần tiếp tuyến $F_t$) mới tạo ra momen lực khác 0 làm vật quay."
+            },
+            {
+                id: 305, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.5] Khối tâm của con chuồn chuồn tre giữ cân bằng nằm ở:",
+                options: ["A. Đầu cánh bên phải", "B. Mũi nhọn đặt lên ngón tay", "C. Đuôi", "D. Đầu cánh bên trái"],
+                correctIndex: 1, formula: "\\sum m_i \\vec{r}_i = 0 \\implies \\text{Khối tâm nằm ở điểm tựa}",
+                explanation: "Con chuồn chuồn tre đứng cân bằng được trên ngón tay vì thiết kế của nó làm cho khối tâm rơi đúng vào vị trí mỏ (mũi nhọn)."
+            },
+            {
+                id: 306, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.6] Một chiếc gậy bóng chày được cắt đôi qua trọng tâm của nó. Kết luận nào sau đây là ĐÚNG?",
+                options: [
+                    "A. Phần cán (bên phải) có khối lượng lớn hơn",
+                    "B. Phần đầu to (bên trái) có khối lượng lớn hơn",
+                    "C. Hai phần có khối lượng bằng nhau",
+                    "D. Chưa đủ dữ kiện để so sánh"
+                ],
+                correctIndex: 1, formula: "m_1 r_1 = m_2 r_2 \\implies r_1 < r_2 \\implies m_1 > m_2",
+                explanation: "Trọng tâm nằm gần đầu to hơn ($r_1 < r_2$). Để momen trọng lực cân bằng ($m_1 r_1 = m_2 r_2$), phần đầu to ngắn hơn phải có khối lượng $m_1$ lớn hơn."
+            },
+            {
+                id: 307, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.7] Vận động viên trượt băng nghệ thuật dang 2 tay quay quanh trục thẳng đứng. Sau đó khép tay lại thì chuyển động quay sẽ:",
+                options: ["A. Quay nhanh hơn", "B. Quay chậm hơn", "C. Dừng lại ngay lập tức", "D. Không thay đổi"],
+                correctIndex: 0, formula: "I_1 \\omega_1 = I_2 \\omega_2 \\quad (I_2 < I_1 \\implies \\omega_2 > \\omega_1)",
+                explanation: "Khi khép tay, khối lượng phân bố gần trục quay hơn nên momen quán tính $I$ giảm. Theo bảo toàn momen động lượng $L = I\\omega$, tốc độ góc $\\omega$ tăng (quay nhanh hơn)."
+            },
+            {
+                id: 308, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.8] Tác dụng một momen lực không đổi lên vật rắn quay quanh trục cố định. Đại lượng nào sau đây KHÔNG ĐỔI?",
+                options: ["A. Vận tốc góc", "B. Gia tốc góc", "C. Momen động lượng", "D. Động năng"],
+                correctIndex: 1, formula: "\\alpha = \\frac{\\tau}{I} = \\text{hằng số}",
+                explanation: "Theo phương trình cơ bản chuyển động quay $\\tau = I\\alpha$, khi $\\tau$ không đổi và $I$ không đổi thì gia tốc góc $\\alpha$ là hằng số."
+            },
+            {
+                id: 309, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.9] Một vòng kim loại bán kính $R$, khối lượng $m$ phân bố đều. Momen quán tính đối với trục quay vuông góc mặt phẳng vòng dây tại tâm là:",
+                options: ["A. $m R^2$", "B. $\\frac{1}{2} m R^2$", "C. $2 m R^2$", "D. $\\frac{2}{5} m R^2$"],
+                correctIndex: 0, formula: "I = m R^2",
+                explanation: "Mọi phần tử của vòng tròn mảnh đều cách trục qua tâm một khoảng đúng bằng $R$, nên $I = \\int R^2 dm = m R^2$."
+            },
+            {
+                id: 310, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.10] Một đĩa mài kim loại bán kính $R$, khối lượng $m$ phân bố đều. Momen quán tính đối với trục quay vuông góc mặt đĩa tại tâm đĩa là:",
+                options: ["A. $m R^2$", "B. $\\frac{1}{2} m R^2$", "C. $2 m R^2$", "D. $\\frac{2}{5} m R^2$"],
+                correctIndex: 1, formula: "I = \\frac{1}{2} m R^2",
+                explanation: "Công thức momen quán tính của đĩa tròn đồng chất trục qua tâm là $I = \\frac{1}{2} m R^2$."
+            },
+            {
+                id: 311, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.11] Một thanh mảnh đồng chất chiều dài $a$, khối lượng $m$. Momen quán tính của thanh đối với trục quay vuông góc và đi qua trung điểm thanh là:",
+                options: ["A. $\\frac{1}{12} m a^2$", "B. $\\frac{1}{4} m a^2$", "C. $\\frac{1}{3} m a^2$", "D. $\\frac{1}{2} m a^2$"],
+                correctIndex: 0, formula: "I_{kt} = \\frac{1}{12} m a^2",
+                explanation: "Công thức momen quán tính của thanh mảnh đồng chất đối với trục quay qua trung điểm khối tâm là $I = \\frac{1}{12} m a^2$."
+            },
+            {
+                id: 312, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.12] Một viên bi kim loại đặc bán kính $R$, khối lượng $m$ phân bố đều. Momen quán tính đối với trục quay đi qua tâm viên bi là:",
+                options: ["A. $m R^2$", "B. $\\frac{1}{2} m R^2$", "C. $\\frac{2}{3} m R^2$", "D. $\\frac{2}{5} m R^2$"],
+                correctIndex: 3, formula: "I = \\frac{2}{5} m R^2",
+                explanation: "Công thức chuẩn momen quán tính của quả cầu đặc đồng chất trục qua tâm là $I = \\frac{2}{5} m R^2$."
+            },
+            {
+                id: 313, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.13] Một quả bóng đá bán kính $R$, khối lượng $m$ phân bố đều trên mặt cầu rỗng. Momen quán tính của quả bóng đối với trục quay qua tâm là:",
+                options: ["A. $m R^2$", "B. $\\frac{1}{2} m R^2$", "C. $\\frac{2}{3} m R^2$", "D. $\\frac{2}{5} m R^2$"],
+                correctIndex: 2, formula: "I = \\frac{2}{3} m R^2",
+                explanation: "Công thức momen quán tính của vỏ cầu rỗng thành mỏng đối với trục qua tâm là $I = \\frac{2}{3} m R^2$."
+            },
+            {
+                id: 314, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.14] Một quả cầu đặc và một quả cầu rỗng có cùng bán kính và khối lượng, quay quanh trục qua tâm với cùng vận tốc góc $\\omega$. Kết luận nào đúng?",
+                options: [
+                    "A. Quả cầu đặc có momen động lượng lớn hơn",
+                    "B. Quả cầu rỗng có momen động lượng lớn hơn",
+                    "C. Hai quả cầu có momen động lượng bằng nhau",
+                    "D. Chưa đủ dữ kiện để so sánh"
+                ],
+                correctIndex: 1, formula: "I_{rong} = \\frac{2}{3} m R^2 > I_{dac} = \\frac{2}{5} m R^2 \\implies L_{rong} > L_{dac}",
+                explanation: "Vì $I_{rỗng} = \\frac{2}{3} m R^2 > I_{đặc} = \\frac{2}{5} m R^2$, khi cùng $\\omega$ thì $L = I\\omega$ của quả cầu rỗng lớn hơn."
+            },
+            {
+                id: 315, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.15] Một hình trụ đặc và một hình trụ rỗng có cùng bán kính và khối lượng, quay quanh trục hình học với cùng vận tốc góc $\\omega$. Kết luận nào đúng?",
+                options: [
+                    "A. Hình trụ đặc có momen động lượng lớn hơn",
+                    "B. Hình trụ rỗng có momen động lượng lớn hơn",
+                    "C. Hai hình trụ có momen động lượng bằng nhau",
+                    "D. Chưa đủ dữ kiện để so sánh"
+                ],
+                correctIndex: 1, formula: "I_{tru\\_rong} = m R^2 > I_{tru\\_dac} = \\frac{1}{2} m R^2",
+                explanation: "Momen quán tính trụ rỗng $I = m R^2$ lớn hơn trụ đặc $I = \\frac{1}{2} m R^2$, do đó momen động lượng $L = I\\omega$ của trụ rỗng lớn hơn."
+            },
+            {
+                id: 316, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.16] Một vòng tròn mảnh và một đĩa tròn đồng chất có cùng khối lượng $m$ và bán kính $R$. Momen quán tính đối với trục qua tâm vuông góc mặt phẳng thỏa mãn:",
+                options: ["A. $I_{vong} = \\frac{1}{2} I_{dia}$", "B. $I_{vong} = I_{dia}$", "C. $I_{vong} = 2 I_{dia}$", "D. $I_{vong} = 4 I_{dia}$"],
+                correctIndex: 2, formula: "I_{vong} = m R^2, \\quad I_{dia} = \\frac{1}{2} m R^2 \\implies I_{vong} = 2 I_{dia}",
+                explanation: "Vòng tròn có $I = m R^2$, đĩa tròn có $I = \\frac{1}{2} m R^2$. Do đó $I_{vòng} = 2 I_{đĩa}$."
+            },
+            {
+                id: 317, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.17] Một đĩa đồng chất khối lượng $m$, bán kính $R$ quay quanh trục đi qua một điểm O trên vành đĩa và vuông góc với đĩa. Momen quán tính là:",
+                options: ["A. $\\frac{1}{2} m R^2$", "B. $\\frac{3}{2} m R^2$", "C. $\\frac{2}{3} m R^2$", "D. $\\frac{2}{5} m R^2$"],
+                correctIndex: 1, formula: "I_O = I_{kt} + m d^2 = \\frac{1}{2} m R^2 + m R^2 = \\frac{3}{2} m R^2",
+                explanation: "Định lý Steiner-Huygens với khoảng cách dời trục $d = R$: $I_O = \\frac{1}{2} m R^2 + m R^2 = \\frac{3}{2} m R^2$."
+            },
+            {
+                id: 318, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.18] Quả cầu đặc bán kính $R$, khối lượng $m$. Momen quán tính đối với trục quay đi qua trung điểm của một bán kính là:",
+                options: ["A. $\\frac{1}{2} m R^2$", "B. $\\frac{13}{20} m R^2$", "C. $\\frac{2}{3} m R^2$", "D. $\\frac{2}{5} m R^2$"],
+                correctIndex: 1, formula: "I = I_{kt} + m \\left(\\frac{R}{2}\\right)^2 = \\frac{2}{5} m R^2 + \\frac{1}{4} m R^2 = \\frac{13}{20} m R^2",
+                explanation: "Trục dời khoảng $d = R/2$. Áp dụng Steiner-Huygens: $I = \\frac{2}{5} m R^2 + \\frac{1}{4} m R^2 = \\frac{13}{20} m R^2$."
+            },
+            {
+                id: 319, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.19] Một thanh mảnh $AB = a$, đồng chất khối lượng $m$. Momen quán tính của thanh đối với trục quay đi qua đầu A và vuông góc $AB$ là:",
+                options: ["A. $\\frac{1}{12} m a^2$", "B. $\\frac{1}{4} m a^2$", "C. $\\frac{1}{3} m a^2$", "D. $\\frac{1}{2} m a^2$"],
+                correctIndex: 2, formula: "I_A = I_{kt} + m \\left(\\frac{a}{2}\\right)^2 = \\frac{1}{12} m a^2 + \\frac{1}{4} m a^2 = \\frac{1}{3} m a^2",
+                explanation: "Trục quay đi qua đầu thanh $A$ dời một khoảng $d = a/2$ từ trung điểm: $I_A = \\frac{1}{3} m a^2$."
+            },
+            {
+                id: 322, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.22] Thanh AB chiều dài $L$ nhẹ. Đầu A gắn chất điểm $m$, đầu B gắn chất điểm $3m$. Momen quán tính của hệ đối với trục vuông góc AB qua trung điểm AB là:",
+                options: ["A. $\\frac{1}{2} m L^2$", "B. $\\frac{1}{3} m L^2$", "C. $m L^2$", "D. $\\frac{1}{12} m L^2$"],
+                correctIndex: 2, formula: "I = m \\left(\\frac{L}{2}\\right)^2 + 3m \\left(\\frac{L}{2}\\right)^2 = 4m \\frac{L^2}{4} = m L^2",
+                explanation: "Khoảng cách từ hai vật đến trung điểm là $L/2$. $I = m(L/2)^2 + 3m(L/2)^2 = m L^2$."
+            },
+            {
+                id: 323, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.23] Hai quả cầu đặc同 chất có CÙNG KHỐI LƯỢNG nhưng bán kính hơn kém nhau 2 lần ($R_2 = 2 R_1$). Nếu $I_1 = I$ thì $I_2$ bằng:",
+                options: ["A. $4 I$", "B. $8 I$", "C. $16 I$", "D. $32 I$"],
+                correctIndex: 0, formula: "I = \\frac{2}{5} m R^2 \\implies I_2 / I_1 = (R_2 / R_1)^2 = 2^2 = 4",
+                explanation: "Vì cùng khối lượng $m$, momen quán tính tỉ lệ thuận với $R^2$. Khi bán kính tăng 2 lần thì $I$ tăng $2^2 = 4$ lần."
+            },
+            {
+                id: 324, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.24] Hai quả cầu đặc đồng chất CÙNG LÀM BẰNG THÉP có bán kính hơn kém nhau 2 lần ($R_2 = 2 R_1$). Nếu $I_1 = I$ thì $I_2$ bằng:",
+                options: ["A. $4 I$", "B. $8 I$", "C. $16 I$", "D. $32 I$"],
+                correctIndex: 3, formula: "m \\propto R^3, \\quad I = \\frac{2}{5} m R^2 \\propto R^5 \\implies I_2 / I_1 = 2^5 = 32",
+                explanation: "Cùng chất liệu nên khối lượng $m \\propto R^3$. Do đó $I \\propto m R^2 \\propto R^5$. Tăng bán kính 2 lần thì $I$ tăng $2^5 = 32$ lần."
+            },
+            {
+                id: 325, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.25] Bánh xe bán kính $R$ lăn không trượt trên mặt đường. Mối quan hệ giữa vận tốc khối tâm $v_G$ và vận tốc góc $\\omega$ là:",
+                options: ["A. $v_G = \\omega R$", "B. $v_G = \\frac{\\omega}{R}$", "C. $v_G = \\omega R^2$", "D. $v_G = R \\omega^2$"],
+                correctIndex: 0, formula: "v_G = \\omega R",
+                explanation: "Điều kiện lăn không trượt: Tốc độ tịnh tiến của tâm bánh xe bằng tốc độ dài điểm trên vành $v_G = \\omega R$."
+            },
+            {
+                id: 326, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.26] Bánh xe bán kính $R$ lăn không trượt trên mặt đường. Quãng đường khối tâm G đã đi khi bánh xe quay 1 vòng quanh trục là:",
+                options: ["A. $s = 2\\pi R$", "B. $s = \\pi R$", "C. $s = R$", "D. $s = 8R$"],
+                correctIndex: 0, formula: "s = v_G \\cdot T = (\\omega R) \\left(\\frac{2\\pi}{\\omega}\\right) = 2\\pi R",
+                explanation: "Khi quay đúng 1 vòng ($2\\pi\\,\\text{rad}$), quãng đường khối tâm đi được đúng bằng chu vi bánh xe $s = 2\\pi R$."
+            },
+            {
+                id: 327, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: true,
+                question: "[3.27] Thanh AB mảnh đồng chất dài $60\\,\\text{cm}$ khối lượng $m$. Vật nhỏ $2m$ gắn ở đầu A. Khối tâm của hệ cách đầu B của thanh khoảng:",
+                options: ["A. $10\\,\\text{cm}$", "B. $20\\,\\text{cm}$", "C. $50\\,\\text{cm}$", "D. $15\\,\\text{cm}$"],
+                correctIndex: 2, formula: "x_{kt} = \\frac{2m(0) + m(30)}{3m} = 10\\,\\text{cm} \\text{ (từ A)} \\implies 60 - 10 = 50\\,\\text{cm} \\text{ (từ B)}",
+                explanation: "Chọn gốc tọa độ tại A. Khối tâm thanh tại $x = 30\\,\\text{cm}$. $x_{kt} = \\frac{2m(0) + m(30)}{3m} = 10\\,\\text{cm}$ từ A. Khoảng cách tới B là $60 - 10 = 50\\,\\text{cm}$."
+            },
+
+            // ==================== CHƯƠNG 4: TRƯỜNG LỰC THẾ & NĂNG LƯỢNG (LÝ THUYẾT 4.1 - 4.18) ====================
+            {
+                id: 401, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.1] Trong va chạm giữa hai quả cầu (coi hệ là kín), đại lượng nào của hệ BẮT BUỘC luôn được bảo toàn?",
+                options: ["A. Động năng", "B. Động lượng", "C. Cơ năng", "D. Vận tốc"],
+                correctIndex: 1, formula: "\\sum \\vec{F}_{ngoai} = 0 \\implies \\vec{P} = \\text{const}",
+                explanation: "Đối với mọi va chạm trong hệ kín (dù là va chạm đàn hồi hay va chạm mềm), động lượng tổng của hệ luôn luôn được bảo toàn."
+            },
+            {
+                id: 402, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.2] Chọn câu trả lời đúng: Động năng của quả cầu đặc chuyển động quay:",
+                options: [
+                    "A. Tỷ lệ nghịch với momen quán tính",
+                    "B. Tỷ lệ thuận với bình phương khối lượng",
+                    "C. Tỷ lệ thuận với bình phương vận tốc góc",
+                    "D. Tỷ lệ nghịch với bán kính"
+                ],
+                correctIndex: 2, formula: "E_q = \\frac{1}{2} I \\omega^2",
+                explanation: "Động năng quay $E_q = \\frac{1}{2} I \\omega^2$ tỉ lệ thuận với bình phương của vận tốc góc $\\omega^2$."
+            },
+            {
+                id: 403, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.3] Một vật được thả rơi tự do, trong quá trình rơi (bỏ qua sức cản không khí):",
+                options: [
+                    "A. Động năng của vật không thay đổi",
+                    "B. Thế năng của vật không thay đổi",
+                    "C. Tổng động năng và thế năng của vật không thay đổi",
+                    "D. Tổng động năng và thế năng của vật thay đổi"
+                ],
+                correctIndex: 2, formula: "W = E_k + E_t = \\text{hằng số}",
+                explanation: "Trong trường trọng lực (trường lực thế), khi bỏ qua ma sát thì cơ năng (tổng động năng và thế năng) của vật được bảo toàn."
+            },
+            {
+                id: 404, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.4] Chọn câu trả lời đúng: Khi vật chỉ chịu tác dụng của lực thế:",
+                options: ["A. Cơ năng của vật được bảo toàn", "B. Thế năng của vật được bảo toàn", "C. Động năng của vật được bảo toàn", "D. Công được bảo toàn"],
+                correctIndex: 0, formula: "W = E_k + E_t = \\text{const}",
+                explanation: "Định luật bảo toàn cơ năng khẳng định: Khi hệ chỉ chịu tác dụng của lực thế, cơ năng của hệ là đại lượng bảo toàn."
+            },
+            {
+                id: 405, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.5] Chọn câu trả lời đúng: Công của trọng lực:",
+                options: [
+                    "A. Không phụ thuộc vào quỹ đạo chuyển động",
+                    "B. Phụ thuộc vào quỹ đạo chuyển động",
+                    "C. Không phụ thuộc vào vị trí đầu của quỹ đạo",
+                    "D. Không phụ thuộc vào vị trí cuối của quỹ đạo"
+                ],
+                correctIndex: 0, formula: "A_{12} = m g (z_1 - z_2)",
+                explanation: "Trọng lực là lực thế nên công của trọng lực chỉ phụ thuộc vị trí đầu $z_1$ và vị trí cuối $z_2$, hoàn toàn không phụ thuộc dạng đường đi."
+            },
+            {
+                id: 406, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.6] Xét một vật chuyển động thẳng biến đổi đều theo phương nằm ngang. Đại lượng nào sau đây KHÔNG ĐỔI?",
+                options: ["A. Động năng", "B. Động lượng", "C. Thế năng", "D. Vận tốc"],
+                correctIndex: 2, formula: "E_t = m g z = 0 \\quad (\\text{z không đổi trên mặt ngang})",
+                explanation: "Vật di chuyển nằm ngang ở độ cao $z$ không đổi nên thế năng trọng trường của vật không thay đổi."
+            },
+            {
+                id: 407, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.7] Phát biểu nào sau đây SAI khi so sánh thế năng hấp dẫn và thế năng đàn hồi?",
+                options: [
+                    "A. Cùng là một dạng năng lượng",
+                    "B. Có dạng biểu thức khác nhau",
+                    "C. Đều phụ thuộc vào điểm đầu và điểm cuối",
+                    "D. Đều là đại lượng vô hướng, có thể dương, âm hoặc bằng không"
+                ],
+                correctIndex: 2, formula: "W_{dh} = \\frac{1}{2} k x^2 \\quad (\\text{Phụ thuộc độ biến dạng tại trạng thái})",
+                explanation: "Thế năng đàn hồi $W_t = \\frac{1}{2} k x^2$ phụ thuộc vào độ biến dạng $x$ tại trạng thái xét chứ không chỉ riêng điểm đầu cuối."
+            },
+            {
+                id: 408, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.8] Phát biểu nào sau đây là SAI khi nói về thế năng trọng trường?",
+                options: [
+                    "A. Luôn có giá trị dương",
+                    "B. Tỉ lệ với khối lượng của vật",
+                    "C. Hơn kém nhau một hằng số đối với 2 mốc thế năng khác nhau",
+                    "D. Có giá trị tùy thuộc vào mặt phẳng chọn làm mốc thế năng"
+                ],
+                correctIndex: 0, formula: "E_t = m g z \\quad (z < 0 \\implies E_t < 0)",
+                explanation: "Thế năng trọng trường phụ thuộc gốc thế năng chọn. Nếu vật ở phía dưới gốc thế năng ($z < 0$) thì thế năng âm. Khẳng định A 'luôn dương' là SAI."
+            },
+            {
+                id: 409, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.9] Trong quá trình rơi tự do, đại lượng nào sau đây của vật không đổi?",
+                options: ["A. Động năng", "B. Thế năng", "C. Động lượng", "D. Cơ năng"],
+                correctIndex: 3, formula: "W = E_k + E_t = \\text{const}",
+                explanation: "Khi rơi tự do chỉ chịu trọng lực (lực thế), cơ năng của vật được bảo toàn."
+            },
+            {
+                id: 410, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.10] Chọn câu trả lời đúng: Khi vật chịu tác dụng của lực không phải là lực thế (như lực ma sát):",
+                options: [
+                    "A. Cơ năng của vật được bảo toàn",
+                    "B. Động năng của vật được bảo toàn",
+                    "C. Thế năng của vật được bảo toàn",
+                    "D. Năng lượng toàn phần của vật được bảo toàn"
+                ],
+                correctIndex: 3, formula: "\\Delta W = W_{ms} \\implies \\text{Năng lượng toàn phần bảo toàn}",
+                explanation: "Dù cơ năng bị tiêu hao do ma sát biến thành nhiệt, nhưng NĂNG LƯỢNG TOÀN PHẦN của hệ cô lập luôn luôn bảo toàn."
+            },
+            {
+                id: 411, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.11] Chọn câu trả lời ĐÚNG:",
+                options: [
+                    "A. Động lượng là đại lượng đặc trưng cho chuyển động về mặt động học",
+                    "B. Động lượng là đại lượng đặc trưng cho chuyển động về mặt động lực học",
+                    "C. Xung lượng của lực đặc trưng cho động học",
+                    "D. Vận tốc đặc trưng cho động lực học"
+                ],
+                correctIndex: 1, formula: "\\vec{p} = m \\vec{v}",
+                explanation: "Động lượng $\\vec{p} = m\\vec{v}$ kết hợp cả khối lượng $m$ (quán tính) và vận tốc $\\vec{v}$, đặc trưng cho chuyển động về mặt ĐỘNG LỰC HỌC."
+            },
+            {
+                id: 412, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.12] Phát biểu nào sau đây là ĐÚNG? Đối với chất điểm, độ biến thiên thế năng bằng về độ lớn nhưng trái dấu với:",
+                options: [
+                    "A. Độ biến thiên năng lượng toàn phần",
+                    "B. Độ biến thiên cơ năng",
+                    "C. Công toàn phần",
+                    "D. Công thực hiện bởi các lực thế"
+                ],
+                correctIndex: 3, formula: "A_{lucthe} = -\\Delta U = U_1 - U_2",
+                explanation: "Công thực hiện bởi lực thế trên một đoạn đường bằng độ giảm thế năng (trái dấu với độ biến thiên thế năng $\\Delta U$)."
+            },
+            {
+                id: 414, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.14] Trong va chạm đàn hồi XUYÊN TÂM giữa hai quả cầu giống hệt nhau, nếu lúc đầu có một quả đứng yên thì ngay sau va chạm:",
+                options: [
+                    "A. Sẽ có một quả cầu đứng yên (quả 1 dừng lại, quả 2 chuyển động với vận tốc quả 1)",
+                    "B. Hai quả cầu chuyển động ngược chiều",
+                    "C. Hai quả cầu chuyển động cùng chiều",
+                    "D. Hai quả cầu chuyển động vuông góc"
+                ],
+                correctIndex: 0, formula: "v_1' = 0, \\quad v_2' = v_1",
+                explanation: "Va chạm đàn hồi xuyên tâm cùng khối lượng: hai vật trao đổi vận tốc cho nhau. Quả 1 đang bay sẽ dừng lại ($v_1'=0$), quả 2 đứng yên sẽ văng đi với đúng vận tốc ban đầu của quả 1."
+            },
+            {
+                id: 415, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.15] Trong va chạm đàn hồi KHÔNG XUYÊN TÂM giữa hai quả cầu giống hệt nhau, nếu lúc đầu quả 2 đứng yên thì ngay sau va chạm:",
+                options: [
+                    "A. Sẽ có một quả cầu đứng yên",
+                    "B. Hai quả cầu chuyển động ngược chiều",
+                    "C. Hai quả cầu chuyển động cùng chiều",
+                    "D. Hai quả cầu chuyển động theo hai hướng vuông góc với nhau"
+                ],
+                correctIndex: 3, formula: "\\vec{v}_1' \\cdot \\vec{v}_2' = 0 \\implies \\theta = 90^\\circ",
+                explanation: "Trong va chạm đàn hồi không xuyên tâm giữa 2 vật cùng khối lượng (1 vật đứng yên), vectơ vận tốc sau va chạm của 2 vật luôn hợp với nhau góc $90^\\circ$."
+            },
+            {
+                id: 416, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.16] Một vật rắn quay xung quanh một trục cố định thì đạo hàm theo thời gian của momen động lượng $\\frac{d\\vec{L}}{dt}$ bằng:",
+                options: [
+                    "A. Hợp lực tác dụng lên vật",
+                    "B. Động năng của vật",
+                    "C. Momen của các lực tác dụng lên vật đối với trục quay",
+                    "D. Momen quán tính của vật"
+                ],
+                correctIndex: 2, formula: "\\frac{d\\vec{L}}{dt} = \\vec{\\tau}",
+                explanation: "Đạo hàm theo thời gian của momen động lượng đối với trục quay bằng tổng momen ngoại lực tác dụng lên vật rắn đối với trục đó."
+            },
+            {
+                id: 417, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.17] Chọn phát biểu SAI? Khi một vật từ độ cao $z$, với cùng vận tốc đầu, bay xuống đất theo những con đường khác nhau (bỏ qua ma sát):",
+                options: [
+                    "A. Độ lớn vận tốc chạm đất bằng nhau",
+                    "B. Thời gian rơi bằng nhau",
+                    "C. Công của trọng lực bằng nhau",
+                    "D. Cơ năng tại chân đất bằng nhau"
+                ],
+                correctIndex: 1, formula: "t \\text{ phụ thuộc hình dạng và độ dài đường đi}",
+                explanation: "Hình dạng đường đi khác nhau dẫn đến chiều dài và gia tốc thành phần khác nhau, nên thời gian rơi $t$ sẽ khác nhau. Phát biểu B là SAI."
+            },
+            {
+                id: 418, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: true,
+                question: "[4.18] Một người mang kiện hàng từ tầng 1 lên tầng 3 theo hai cầu thang có hình dạng và chiều dài khác nhau nhưng cùng độ chênh cao. Công của trọng lực tác dụng lên kiện hàng:",
+                options: [
+                    "A. Lớn hơn khi đi theo cầu thang dài hơn",
+                    "B. Nhỏ hơn khi đi theo cầu thang dài hơn",
+                    "C. Bằng nhau trong hai trường hợp",
+                    "D. Phụ thuộc thời gian di chuyển"
+                ],
+                correctIndex: 2, formula: "A_P = m g (z_1 - z_2)",
+                explanation: "Vì trọng lực là lực thế nên công của nó chỉ phụ thuộc độ chênh lệch độ cao $\\Delta z$ giữa hai tầng, hoàn toàn bằng nhau trong cả 2 cách đi."
+            },
+
+            // ==================== CHƯƠNG 5: NHIỆT ĐỘNG LỰC HỌC (LÝ THUYẾT 5.1 - 5.26) ====================
+            {
+                id: 501, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.1] Nén đẳng nhiệt một khối khí lý tưởng trong một bình kín, thì:",
+                options: ["A. Áp suất của khối khí giảm", "B. Áp suất của khối khí tăng", "C. Số mol của khối khí giảm", "D. Thể tích của khối khí tăng"],
+                correctIndex: 1, formula: "p V = \\text{const} \\implies V \\text{ giảm } \\implies p \\text{ tăng}",
+                explanation: "Định luật Boyle-Mariotte: Ở nhiệt độ không đổi, áp suất tỉ lệ nghịch với thể tích. Nén khí làm thể tích $V$ giảm nên áp suất $p$ tăng."
+            },
+            {
+                id: 502, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.2] Khi nung nóng đẳng tích một khối khí lý tưởng không đổi, thì:",
+                options: ["A. Nhiệt độ của khối khí giảm", "B. Áp suất của khối khí giảm", "C. Áp suất của khối khí tăng", "D. Số mol của khối khí tăng"],
+                correctIndex: 2, formula: "\\frac{p}{T} = \\text{const} \\implies T \\text{ tăng } \\implies p \\text{ tăng}",
+                explanation: "Định luật Charles: Khi thể tích không đổi, nung nóng (nhiệt độ $T$ tăng) sẽ làm áp suất $p$ của khối khí tăng tỉ lệ thuận."
+            },
+            {
+                id: 503, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.3] Khi dãn đẳng áp một khối khí lý tưởng không đổi, thì:",
+                options: ["A. Thể tích của khối khí giảm", "B. Số mol của khối khí tăng", "C. Nhiệt độ của khối khí giảm", "D. Nhiệt độ của khối khí tăng"],
+                correctIndex: 3, formula: "\\frac{V}{T} = \\text{const} \\implies V \\text{ tăng } \\implies T \\text{ tăng}",
+                explanation: "Định luật Gay-Lussac: Ở áp suất không đổi, dãn khí (thể tích $V$ tăng) làm nhiệt độ tuyệt đối $T$ của khối khí tăng."
+            },
+            {
+                id: 504, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.4] Khi dãn đoạn nhiệt một khối khí lý tưởng không đổi, thì:",
+                options: ["A. Áp suất của hệ giảm", "B. Thể tích của hệ giảm", "C. Số mol của hệ tăng", "D. Nhiệt độ của hệ tăng"],
+                correctIndex: 0, formula: "p V^\\gamma = \\text{const}, \\quad T V^{\\gamma-1} = \\text{const}",
+                explanation: "Dãn đoạn nhiệt ($V$ tăng, $Q = 0$): Khí thực hiện công làm nội năng giảm $\\implies$ nhiệt độ $T$ giảm và áp suất $p$ giảm."
+            },
+            {
+                id: 505, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.5] Trong quá trình biến đổi đoạn nhiệt một khối khí lý tưởng, nếu nhiệt độ của khối khí giảm thì:",
+                options: ["A. Số mol của khối khí giảm", "B. Thể tích của khối khí tăng", "C. Thể tích của khối khí giảm", "D. Số mol của khối khí tăng"],
+                correctIndex: 1, formula: "T V^{\\gamma-1} = \\text{const} \\implies T \\text{ giảm } \\implies V \\text{ tăng}",
+                explanation: "Trong quá trình đoạn nhiệt, nhiệt độ và thể tích biến thiên ngược chiều nhau. Nhiệt độ giảm chứng tỏ khối khí đang dãn nở (thể tích $V$ tăng)."
+            },
+            {
+                id: 506, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.6] Tính chất nào sau đây KHÔNG PHẢI là của phân tử?",
+                options: [
+                    "A. Các phân tử có lúc đứng yên, có lúc chuyển động",
+                    "B. Các phân tử luôn chuyển động không ngừng",
+                    "C. Các phân tử chuyển động càng nhanh khi nhiệt độ vật càng cao",
+                    "D. Các phân tử va chạm vào thành bình gây áp suất"
+                ],
+                correctIndex: 0, formula: "\\bar{E}_k = \\frac{3}{2} k T > 0 \\quad (\\text{Luôn chuyển động nhiệt})",
+                explanation: "Các phân tử cấu tạo nên chất luôn luôn chuyển động hỗn loạn không ngừng (chuyển động nhiệt). Phát biểu A 'có lúc đứng yên' là SAI."
+            },
+            {
+                id: 507, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.7] Nhận xét nào sau đây KHÔNG ĐÚNG đối với khí lý tưởng?",
+                options: [
+                    "A. Thể tích của các phân tử khí có thể bỏ qua",
+                    "B. Các phân tử khí chỉ tương tác với nhau khi va chạm",
+                    "C. Các phân tử chuyển động càng nhanh khi nhiệt độ càng cao",
+                    "D. Khối lượng của các phân tử khí có thể bỏ qua"
+                ],
+                correctIndex: 3, formula: "m_{ph\\,tu} \\ne 0",
+                explanation: "Các phân tử khí lý tưởng vẫn có khối lượng xác định (chỉ coi thể tích của bản thân các phân tử là rất nhỏ so với thể tích bình chứa). D là câu SAI."
+            },
+            {
+                id: 508, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.8] Trong quá trình biến đổi từ trạng thái 1 sang trạng thái 2, đại lượng nào KHÔNG PHỤ THUỘC cách biến đổi (quá trình)?",
+                options: ["A. Công", "B. Nhiệt", "C. Độ biến thiên nội năng", "D. Công và nhiệt"],
+                correctIndex: 2, formula: "\\Delta U = U_2 - U_1 \\quad (\\text{Hàm trạng thái})",
+                explanation: "Nội năng $U$ là hàm trạng thái, nên độ biến thiên nội năng $\\Delta U$ chỉ phụ thuộc trạng thái đầu và cuối, không phụ thuộc đường đi."
+            },
+            {
+                id: 509, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.9] Đặc điểm chung của công $W$ và nhiệt lượng $Q$ trong một quá trình nhiệt động là:",
+                options: [
+                    "A. Cùng phụ thuộc vào quá trình biến đổi (là hàm quá trình)",
+                    "B. Luôn cùng dấu trong mỗi quá trình biến đổi",
+                    "C. Luôn nhận giá trị dương trong các quá trình",
+                    "D. Chỉ khác không khi có sự biến đổi thể tích"
+                ],
+                correctIndex: 0, formula: "W, Q \\text{ là các hàm quá trình (Path functions)}",
+                explanation: "Cả công $W$ và nhiệt lượng $Q$ không phải là thuộc tính trạng thái mà là hai hình thức trao đổi năng lượng phụ thuộc vào đường đi (quá trình biến đổi)."
+            },
+            {
+                id: 510, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.10] Chọn phát biểu SAI khi nói về hệ khí lý tưởng:",
+                options: [
+                    "A. Có khả năng trao đổi công và nhiệt với môi trường",
+                    "B. Không trao đổi công trong quá trình đẳng tích",
+                    "C. Có nội năng không đổi nếu hệ cô lập",
+                    "D. Không trao đổi nhiệt trong quá trình đẳng nhiệt"
+                ],
+                correctIndex: 3, formula: "dQ = dW = p dV \\ne 0 \\text{ trong quá trình đẳng nhiệt}",
+                explanation: "Trong quá trình đẳng nhiệt của khí lý tưởng, $dU = 0 \\implies Q = W \\ne 0$ (khí vẫn nhận nhiệt để sinh công). Phát biểu D là SAI."
+            },
+            {
+                id: 511, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.11] Chọn phát biểu SAI. Nội năng của khí lý tưởng:",
+                options: ["A. Phụ thuộc nhiệt độ của hệ", "B. Không phụ thuộc thể tích", "C. Không phụ thuộc áp suất", "D. Không phụ thuộc nhiệt độ"],
+                correctIndex: 3, formula: "U = \\frac{i}{2} n R T",
+                explanation: "Nội năng của khí lý tưởng CHỈ PHỤ THUỘC VÀO NHIỆT ĐỘ $T$. Phát biểu D 'không phụ thuộc nhiệt độ' là SAI."
+            },
+            {
+                id: 512, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.12] Chọn phát biểu ĐÚNG. Độ biến thiên nội năng của hệ trong quá trình nhiệt động:",
+                options: [
+                    "A. Phụ thuộc đường dẫn của quá trình đó",
+                    "B. Không phụ thuộc vào trạng thái đầu và cuối của hệ",
+                    "C. Bằng không khi hệ cô lập với môi trường",
+                    "D. Bằng tổng của nhiệt lượng và công mà hệ trao đổi trong quá trình đó"
+                ],
+                correctIndex: 3, formula: "\\Delta U = Q + W",
+                explanation: "Theo Nguyên lý I nhiệt động lực học, $\\Delta U = Q + W$ (độ biến thiên nội năng bằng tổng công và nhiệt hệ nhận được)."
+            },
+            {
+                id: 513, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.13] Chọn phát biểu ĐÚNG khi nói về nội năng?",
+                options: [
+                    "A. Nội năng của chất khí lý tưởng không phụ thuộc vào nhiệt độ",
+                    "B. Nội năng của vật là năng lượng chỉ hình thành trong quá trình vật biến đổi trạng thái",
+                    "C. Nội năng của vật là năng lượng không chuyển hóa thành các dạng năng lượng khác",
+                    "D. Nội năng của vật là tổng động năng và thế năng của các phân tử cấu tạo nên vật"
+                ],
+                correctIndex: 3, formula: "U = \\sum E_{k,ph\\,tu} + \\sum E_{t,ph\\,tu}",
+                explanation: "Định nghĩa nội năng của một vật là tổng động năng chuyển động nhiệt và thế năng tương tác của tất cả các phân tử cấu tạo nên vật đó."
+            },
+            {
+                id: 514, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.14] Chọn phát biểu ĐÚNG:",
+                options: [
+                    "A. Trong quá trình đẳng tích, công và nhiệt lượng luôn bằng nhau",
+                    "B. Công và nhiệt lượng là một dạng của năng lượng",
+                    "C. Công và nhiệt lượng là hàm của trạng thái",
+                    "D. Hệ trao đổi công với môi trường khi thể tích của hệ thay đổi"
+                ],
+                correctIndex: 3, formula: "dW = p dV \\ne 0 \\iff dV \\ne 0",
+                explanation: "Công cơ học của khối khí chỉ phát sinh khi có sự biến đổi thể tích ($dW = pdV$). D là phát biểu đúng."
+            },
+            {
+                id: 515, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.15] Chọn phát biểu SAI:",
+                options: [
+                    "A. Nhiệt không thể tự động truyền từ vật lạnh hơn sang vật nóng hơn",
+                    "B. Hệ chỉ trao đổi công với môi trường khi thể tích của hệ thay đổi",
+                    "C. Trong một chu trình kín, độ biến thiên nội năng của khí lý tưởng bằng không",
+                    "D. Trong quá trình đẳng nhiệt, công sinh ra luôn bằng không"
+                ],
+                correctIndex: 3, formula: "W = n R T \\ln(V_2 / V_1) \\ne 0",
+                explanation: "Trong quá trình đẳng nhiệt dãn nở, khối khí vẫn sinh công $W \neq 0$. Khẳng định D 'công luôn bằng không' là SAI."
+            },
+            {
+                id: 516, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.16] Câu nào KHÔNG ĐÚNG khi nói về nội năng?",
+                options: [
+                    "A. Nội năng của chất khí lý tưởng không phụ thuộc vào nhiệt độ",
+                    "B. Nội năng của một vật có thể tăng hoặc giảm",
+                    "C. Nội năng có thể chuyển hóa thành dạng năng lượng khác",
+                    "D. Nội năng của vật là tổng động năng và thế năng của các phân tử"
+                ],
+                correctIndex: 0, formula: "U = f(T)",
+                explanation: "Nội năng của khí lý tưởng phụ thuộc trực tiếp vào nhiệt độ $T$. Khẳng định A là SAI."
+            },
+            {
+                id: 517, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.17] Một hệ khí lý tưởng biến đổi đẳng tích đến trạng thái có áp suất lớn hơn. Chọn đáp án ĐÚNG về công và nhiệt mà hệ trao đổi:",
+                options: [
+                    "A. Hệ nhận nhiệt, nhận công",
+                    "B. Hệ nhận nhiệt, sinh công",
+                    "C. Hệ tỏa nhiệt, sinh công",
+                    "D. Hệ nhận nhiệt, không trao đổi công"
+                ],
+                correctIndex: 3, formula: "dV = 0 \\implies W = 0; \\quad p \\text{ tăng } \\implies T \\text{ tăng } \\implies Q > 0",
+                explanation: "Đẳng tích nên $W = 0$ (không trao đổi công). Áp suất tăng $\implies$ nhiệt độ tăng $\implies \Delta U > 0 \implies Q > 0$ (hệ nhận nhiệt)."
+            },
+            {
+                id: 518, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.18] Phát biểu nào sau đây ĐÚNG theo Nguyên lý II Nhiệt động lực học?",
+                options: [
+                    "A. Nhiệt lượng không thể tự truyền từ một vật lạnh sang vật nóng hơn",
+                    "B. Nhiệt lượng là nội năng của vật và luôn tồn tại trong vật",
+                    "C. Nhiệt lượng có thể tự truyền từ vật lạnh sang vật nóng hơn mà không cần tốn công",
+                    "D. Nhiệt lượng luôn không đổi trong quá trình biến đổi trạng thái"
+                ],
+                correctIndex: 0, formula: "\\text{Phát biểu Clausius của Nguyên lý II}",
+                explanation: "Theo phát biểu Clausius: Nhiệt không thể tự động truyền từ một vật sang vật nóng hơn mà không có sự can thiệp công từ ngoài."
+            },
+            {
+                id: 519, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.19] Chọn câu ĐÚNG:",
+                options: [
+                    "A. Trong quá trình biến đổi trạng thái, cơ năng không thể tự chuyển hóa thành nội năng",
+                    "B. Quá trình truyền nhiệt là quá trình thuận nghịch",
+                    "C. Động cơ nhiệt chỉ có thể chuyển hóa một phần nhiệt lượng nhận được thành công",
+                    "D. Động cơ nhiệt có thể chuyển hóa hoàn toàn nhiệt lượng nhận được thành công"
+                ],
+                correctIndex: 2, formula: "\\eta = \\frac{W}{Q_1} < 1",
+                explanation: "Theo nguyên lý II (phát biểu Kelvin-Planck), không một động cơ nhiệt nào có thể biến đổi hoàn toàn 100% nhiệt nhận thành công cơ học."
+            },
+            {
+                id: 520, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.20] Chu trình Carnot là một chu trình gồm hai cặp quá trình thuận nghịch nào sau đây xen kẽ nhau?",
+                options: [
+                    "A. Đẳng tích và đẳng nhiệt",
+                    "B. Đẳng tích và đoạn nhiệt",
+                    "C. Đẳng nhiệt và đẳng áp",
+                    "D. Đoạn nhiệt và đẳng nhiệt"
+                ],
+                correctIndex: 3, formula: "\\text{Chu trình Carnot} = 2 \\text{ quá trình đẳng nhiệt} + 2 \\text{ quá trình đoạn nhiệt}",
+                explanation: "Chu trình Carnot lý tưởng gồm 2 quá trình đẳng nhiệt (nhận nhiệt $Q_1$, tỏa nhiệt $Q_2$) và 2 quá trình đoạn nhiệt xen kẽ."
+            },
+            {
+                id: 521, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.21] Chọn phát biểu SAI:",
+                options: [
+                    "A. Quá trình đẳng tích là quá trình thể tích không đổi",
+                    "B. Quá trình đẳng nhiệt là quá trình nhiệt độ không đổi",
+                    "C. Quá trình đẳng áp là quá trình áp suất không đổi",
+                    "D. Quá trình đoạn nhiệt là quá trình nhiệt lượng của hệ không đổi"
+                ],
+                correctIndex: 3, formula: "dQ = 0 \\quad (\\text{Đoạn nhiệt là KHÔNG trao đổi nhiệt với bên ngoài})",
+                explanation: "Đoạn nhiệt là quá trình hệ KHÔNG trao đổi nhiệt lượng với môi trường ngoài ($dQ = 0$). Nhiệt lượng $Q$ không phải là tham số trạng thái nên nói 'nhiệt lượng không đổi' là phát biểu SAI."
+            },
+            {
+                id: 522, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.22] Cho đồ thị phác họa chu trình biến đổi 2312 của khối khí trên hệ tọa độ OPV (xem sơ đồ chuẩn). Đồ thị thể hiện biến đổi của các quá trình:",
+                options: [
+                    "A. Giãn nở đẳng áp, hơ nóng đẳng tích rồi nén đoạn nhiệt về ban đầu",
+                    "B. Giãn nở đẳng áp, làm lạnh đẳng tích và nén đoạn nhiệt về trạng thái ban đầu",
+                    "C. Giãn nở đẳng nhiệt, nén đẳng áp và hơ nóng đẳng tích",
+                    "D. Giãn nở đoạn nhiệt, nén đẳng áp và hơ nóng đẳng tích"
+                ],
+                correctIndex: 1, formula: "p = \\text{const} \\to V = \\text{const} \\to p V^\\gamma = \\text{const}",
+                explanation: "Chu trình 2312 gồm: 2->3 dãn đẳng áp, 3->1 làm lạnh đẳng tích, 1->2 nén đoạn nhiệt trở về ban đầu."
+            },
+            {
+                id: 523, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.23] Cho đồ thị phác họa chu trình biến đổi 3123 của khối khí trên hệ tọa độ OPV. Đồ thị thể hiện các quá trình:",
+                options: [
+                    "A. Giãn nở đẳng áp, hơ nóng đẳng tích rồi nén đoạn nhiệt",
+                    "B. Giãn nở đẳng áp, làm lạnh đẳng tích rồi nén đoạn nhiệt",
+                    "C. Giãn nở đẳng nhiệt, nén đẳng áp và hơ nóng đẳng tích",
+                    "D. Giãn nở đoạn nhiệt, nén đẳng áp và hơ nóng đẳng tích đến trạng thái ban đầu"
+                ],
+                correctIndex: 3, formula: "3 \\to 1: \\text{Đoạn nhiệt}, \\quad 1 \\to 2: \\text{Đẳng áp}, \\quad 2 \\to 3: \\text{Đẳng tích}",
+                explanation: "Chu trình 3123 gồm: 3->1 dãn nở đoạn nhiệt, 1->2 nén đẳng áp, 2->3 hơ nóng đẳng tích."
+            },
+            {
+                id: 524, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.24] Cho đồ thị phác họa chu trình biến đổi 1231 của khối khí trên hệ trục tọa độ OPV. Đồ thị thể hiện các quá trình:",
+                options: [
+                    "A. Nén đoạn nhiệt, giãn nở đẳng áp và làm lạnh đẳng tích về trạng thái ban đầu",
+                    "B. Nén đẳng áp, làm lạnh đẳng tích rồi nén đoạn nhiệt",
+                    "C. Giãn nở đẳng nhiệt, nén đẳng áp và hơ nóng đẳng tích",
+                    "D. Nén đoạn nhiệt, nén đẳng áp và hơ nóng đẳng tích"
+                ],
+                correctIndex: 0, formula: "1 \\to 2: \\text{Nén đoạn nhiệt}, \\quad 2 \\to 3: \\text{Giãn đẳng áp}, \\quad 3 \\to 1: \\text{Đẳng tích}",
+                explanation: "Quá trình 1->2 nén đoạn nhiệt, 2->3 giãn nở đẳng áp, 3->1 làm lạnh đẳng tích."
+            },
+            {
+                id: 525, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.25] Cho đồ thị phác họa chu trình biến đổi 1231 trên mặt phẳng OPV:",
+                options: [
+                    "A. Nén đoạn nhiệt, giãn nở đẳng áp và làm lạnh đẳng tích về trạng thái ban đầu",
+                    "B. Nén đẳng áp, làm lạnh đẳng tích rồi nén đoạn nhiệt",
+                    "C. Nén đẳng áp, hơ nóng đẳng tích và giãn nở đẳng nhiệt",
+                    "D. Nén đoạn nhiệt, nén đẳng áp và hơ nóng đẳng tích"
+                ],
+                correctIndex: 0, formula: "1 \\to 2: \\text{Đoạn nhiệt}, \\quad 2 \\to 3: \\text{Đẳng áp}, \\quad 3 \\to 1: \\text{Đẳng tích}",
+                explanation: "Trình tự biến đổi chính xác là: nén đoạn nhiệt, giãn nở đẳng áp và làm lạnh đẳng tích."
+            },
+            {
+                id: 526, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: true,
+                question: "[5.26] Một khối khí lý tưởng không đổi được giữ ở nhiệt độ không đổi. Ban đầu hệ có thể tích $1\\,\\text{m}^3$ và áp suất $1\\,\\text{atm}$. Nếu áp suất giảm còn $0,5\\,\\text{atm}$ thì thể tích khối khí là:",
+                options: ["A. $4\\,\\text{m}^3$", "B. $2\\,\\text{m}^3$", "C. $1\\,\\text{m}^3$", "D. $0,5\\,\\text{m}^3$"],
+                correctIndex: 1, formula: "p_1 V_1 = p_2 V_2 \\implies V_2 = \\frac{p_1 V_1}{p_2} = \\frac{1 \\times 1}{0,5} = 2\\,\\text{m}^3",
+                explanation: "Áp dụng định luật đẳng nhiệt Boyle-Mariotte: $p_1 V_1 = p_2 V_2 \implies V_2 = \frac{1 \times 1}{0.5} = 2\,\text{m}^3$."
+            },
+
+            // ==================== CÂU HỎI BÀI TẬP TÍNH TOÁN PHONG PHÚ (IS_THEORY: FALSE) ====================
+            {
+                id: 151, chapter: 1, chapterName: "Chương 1: Động học chất điểm", isTheory: false,
+                question: "[Bài tập 1.11] Một viên đạn được bắn từ mặt đất với vận tốc đầu $v_0 = 800\\,\\text{m/s}$ theo phương hợp với mặt phẳng ngang góc $30^\\circ$. Xác định tầm xa $L$ của viên đạn. Lấy $g = 10\\,\\text{m/s}^2$.",
+                options: ["A. $46562\\,\\text{m}$", "B. $55426\\,\\text{m}$", "C. $60000\\,\\text{m}$", "D. $65345\\,\\text{m}$"],
+                correctIndex: 1, formula: "L = \\frac{v_0^2 \\sin(2\\alpha)}{g} = \\frac{800^2 \\times \\sin(60^\\circ)}{10} \\approx 55425,6\\,\\text{m}",
+                explanation: "Thay số: $L = \\frac{640000 \\times 0,866}{10} = 55425,6\\,\\text{m} \\approx 55426\\,\\text{m}$."
+            },
+            {
+                id: 152, chapter: 1, chapterName: "Chương 1: Động học chất điểm", isTheory: false,
+                question: "[Bài tập 1.25] Một mô tơ khởi động nhanh dần đều từ trạng thái nghỉ, sau 2 giây đạt tốc độ ổn định 300 vòng/phút. Gia tốc góc $\\alpha$ của mô tơ là:",
+                options: ["A. $10\\pi\\,\\text{rad/s}^2$", "B. $5\\pi\\,\\text{rad/s}^2$", "C. $15\\pi\\,\\text{rad/s}^2$", "D. $20\\pi\\,\\text{rad/s}^2$"],
+                correctIndex: 1, formula: "\\omega = \\frac{300 \\times 2\\pi}{60} = 10\\pi\\,\\text{rad/s}, \\quad \\alpha = \\frac{\\omega - 0}{t} = \\frac{10\\pi}{2} = 5\\pi\\,\\text{rad/s}^2",
+                explanation: "- Tốc độ góc lúc sau: $\\omega = 10\\pi\\,\\text{rad/s}$.\n- Gia tốc góc: $\\alpha = \\frac{10\\pi}{2} = 5\\pi\\,\\text{rad/s}^2$."
+            },
+            {
+                id: 251, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: false,
+                question: "[Bài tập 2.25] Tính trọng lượng của một vật có khối lượng $73\\,\\text{kg}$ khi đặt trên Mặt Trăng có gia tốc trọng trường $g = 1,7\\,\\text{m/s}^2$:",
+                options: ["A. $715\\,\\text{N}$", "B. $124,1\\,\\text{N}$", "C. $730\\,\\text{N}$", "D. $635\\,\\text{N}$"],
+                correctIndex: 1, formula: "P = m g_{MT} = 73 \\times 1,7 = 124,1\\,\\text{N}",
+                explanation: "Trọng lượng trên Mặt Trăng: $P = 73 \\times 1,7 = 124,1\\,\\text{N}$."
+            },
+            {
+                id: 252, chapter: 2, chapterName: "Chương 2: Động lực học chất điểm", isTheory: false,
+                question: "[Bài tập 2.31] Ô tô $m = 1\\,\\text{tấn}$ đang chạy với $v = 54\\,\\text{km/h}$ ($15\\,\\text{m/s}$) thì tắt máy, hãm phanh với lực hãm $F_h = 3000\\,\\text{N}$. Quãng đường ô tô đi được đến khi dừng lại hẳn là:",
+                options: ["A. $18,75\\,\\text{m}$", "B. $486\\,\\text{m}$", "C. $37,5\\,\\text{m}$", "D. $25,0\\,\\text{m}$"],
+                correctIndex: 2, formula: "a = -\\frac{F_h}{m} = -3\\,\\text{m/s}^2, \\quad s = \\frac{-v_0^2}{2a} = \\frac{15^2}{2 \\times 3} = 37,5\\,\\text{m}",
+                explanation: "Gia tốc hãm $a = -3000/1000 = -3\\,\\text{m/s}^2$. Quãng đường dừng: $s = 15^2 / 6 = 37,5\\,\\text{m}$."
+            },
+            {
+                id: 351, chapter: 3, chapterName: "Chương 3: Cơ học Vật Rắn", isTheory: false,
+                question: "[Bài tập 3.20] Một bánh đà đồng chất đường kính $1\\,\\text{m}$ (bán kính $R = 0,5\\,\\text{m}$), khối lượng $m = 250\\,\\text{kg}$. Momen quán tính $I$ của bánh đà qua tâm là:",
+                options: ["A. $62,5\\,\\text{kg}\\cdot\\text{m}^2$", "B. $125\\,\\text{kg}\\cdot\\text{m}^2$", "C. $31,25\\,\\text{kg}\\cdot\\text{m}^2$", "D. $250\\,\\text{kg}\\cdot\\text{m}^2$"],
+                correctIndex: 2, formula: "I = \\frac{1}{2} m R^2 = \\frac{1}{2} \\times 250 \\times (0,5)^2 = 31,25\\,\\text{kg}\\cdot\\text{m}^2",
+                explanation: "Thay số: $I = 0,5 \\times 250 \\times 0,25 = 31,25\\,\\text{kg}\\cdot\\text{m}^2$."
+            },
+            {
+                id: 451, chapter: 4, chapterName: "Chương 4: Trường lực thế", isTheory: false,
+                question: "[Bài tập 4.23] Quả cầu đặc đồng chất khối lượng $20\\,\\text{kg}$ lăn không trượt trên mặt đường với vận tốc khối tâm $v = 10\\,\\text{m/s}$. Động năng toàn phần của quả cầu là:",
+                options: ["A. $1000\\,\\text{J}$", "B. $400\\,\\text{J}$", "C. $600\\,\\text{J}$", "D. $1400\\,\\text{J}$"],
+                correctIndex: 3, formula: "E_k = \\frac{7}{10} m v^2 = \\frac{7}{10} \\times 20 \\times 10^2 = 1400\\,\\text{J}",
+                explanation: "Động năng toàn phần gồm tịnh tiến ($1000\\,\\text{J}$) + quay ($400\\,\\text{J}$) = $1400\\,\\text{J}$."
+            },
+            {
+                id: 551, chapter: 5, chapterName: "Chương 5: Nhiệt động lực học", isTheory: false,
+                question: "[Bài tập 5.28] Khối khí lý tưởng ở $t = 27^\\circ\\text{C}$, $V_1 = 80\\,\\text{lít}$, áp suất $p_1 = 2\\,\\text{atm}$. Nếu nén đẳng nhiệt thể tích giảm còn $V_2 = 40\\,\\text{lít}$ thì áp suất $p_2$ là:",
+                options: ["A. $2,026 \\times 10^5\\,\\text{Pa}$", "B. $4,052 \\times 10^5\\,\\text{Pa}$", "C. $1,013 \\times 10^5\\,\\text{Pa}$", "D. $3,000 \\times 10^5\\,\\text{Pa}$"],
+                correctIndex: 1, formula: "p_2 = p_1 \\frac{V_1}{V_2} = 2 \\times 2 = 4\\,\\text{atm} \\approx 4,052 \\times 10^5\\,\\text{Pa}",
+                explanation: "Thể tích giảm 2 lần thì áp suất tăng 2 lần: $p_2 = 4\\,\\text{atm} = 4 \\times 1,013 \\times 10^5 = 4,052 \\times 10^5\\,\\text{Pa}$."
+            }
+        ];
+
+        // Web Audio API Sound Engine
+        class SoundEngine {
+            constructor() { this.ctx = null; }
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) this.ctx = new AudioCtx();
+                }
+            }
+            playCorrect() {
+                if (!window.app || !window.app.isSoundOn) return;
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            }
+            playWrong() {
+                if (!window.app || !window.app.isSoundOn) return;
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.25);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+            playClick() {
+                if (!window.app || !window.app.isSoundOn) return;
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            }
+        }
+
+        // Canvas Fireworks Engine
+        class FireworksEngine {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+                this.particles = [];
+                this.animating = false;
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
+            resize() {
+                if (!this.canvas) return;
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            start(durationMs = 4000) {
+                if (!this.ctx) return;
+                this.particles = [];
+                this.animating = true;
+                const colors = ['#0ea5e9', '#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+                
+                const createBurst = () => {
+                    const x = Math.random() * this.canvas.width;
+                    const y = Math.random() * (this.canvas.height * 0.5) + this.canvas.height * 0.1;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    for (let i = 0; i < 35; i++) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const speed = Math.random() * 5 + 2;
+                        this.particles.push({
+                            x, y,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed,
+                            alpha: 1,
+                            decay: Math.random() * 0.02 + 0.015,
+                            color,
+                            radius: Math.random() * 2 + 1.5
+                        });
+                    }
+                };
+
+                let count = 0;
+                const interval = setInterval(() => {
+                    createBurst();
+                    count++;
+                    if (count > 8) clearInterval(interval);
+                }, 350);
+
+                this.loop();
+                setTimeout(() => { this.animating = false; }, durationMs);
+            }
+            loop() {
+                if (!this.ctx) return;
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    const p = this.particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.08;
+                    p.alpha -= p.decay;
+                    if (p.alpha <= 0) {
+                        this.particles.splice(i, 1);
+                        continue;
+                    }
+                    this.ctx.save();
+                    this.ctx.globalAlpha = p.alpha;
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = p.color;
+                    this.ctx.fill();
+                    this.ctx.restore();
+                }
+                if (this.animating || this.particles.length > 0) {
+                    requestAnimationFrame(() => this.loop());
+                } else {
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                }
+            }
+        }
+
+        // Main Application Controller
+        class PhysicsApp {
+            constructor() {
+                this.sound = new SoundEngine();
+                this.fireworks = null;
+                this.selectedMode = 'ALL'; 
+                this.selectedChapter = 'ALL';
+                this.selectedCount = 10;
+                this.isSoundOn = true;
+                this.isDarkMode = true;
+
+                this.currentQuiz = [];
+                this.currentIndex = 0;
+                this.userAnswers = [];
+                this.selectedOptionIndex = null;
+                this.secondsElapsed = 0;
+                this.timerInterval = null;
+                this.correctCount = 0;
+                this.hasCheckedCurrent = false;
+
+                this.chapters = [
+                    { id: 'ALL', name: 'Tất Cả 5 Chương (Tổng hợp đề thi)' },
+                    { id: 1, name: 'Chương 1: Động học chất điểm' },
+                    { id: 2, name: 'Chương 2: Động lực học chất điểm' },
+                    { id: 3, name: 'Chương 3: Cơ học hệ chất điểm - Vật rắn' },
+                    { id: 4, name: 'Chương 4: Trường lực thế & Năng lượng' },
+                    { id: 5, name: 'Chương 5: Nhiệt động lực học' }
+                ];
+            }
+
+            init() {
+                this.fireworks = new FireworksEngine('fireworks-canvas');
+                this.renderChapterOptions();
+                this.updateCounts();
+                this.renderMath();
+            }
+
+            renderMath(element = document.body) {
+                if (window.renderMathInElement) {
+                    try {
+                        window.renderMathInElement(element, {
+                            delimiters: [
+                                { left: '$$', right: '$$', display: true },
+                                { left: '$', right: '$', display: false }
+                            ],
+                            throwOnError: false
+                        });
+                    } catch (e) {
+                        console.error("KaTeX error:", e);
+                    }
+                }
+            }
+
+            toggleTheme() {
+                this.isDarkMode = !this.isDarkMode;
+                const html = document.documentElement;
+                const icon = document.getElementById('theme-icon');
+                if (this.isDarkMode) {
+                    html.classList.add('dark');
+                    icon.className = 'fa-solid fa-moon text-lg';
+                } else {
+                    html.classList.remove('dark');
+                    icon.className = 'fa-solid fa-sun text-lg text-amber-500';
+                }
+                this.sound.playClick();
+            }
+
+            toggleSound() {
+                this.isSoundOn = !this.isSoundOn;
+                const icon = document.getElementById('sound-icon');
+                if (this.isSoundOn) {
+                    icon.className = 'fa-solid fa-volume-high text-lg text-physics-500';
+                } else {
+                    icon.className = 'fa-solid fa-volume-xmark text-lg text-slate-400';
+                }
+            }
+
+            setMode(mode) {
+                this.sound.playClick();
+                this.selectedMode = mode;
+                
+                document.querySelectorAll('.mode-btn').forEach(btn => {
+                    const btnMode = btn.getAttribute('data-mode');
+                    if (btnMode === mode) {
+                        btn.className = 'mode-btn p-3.5 rounded-2xl border text-xs sm:text-sm font-bold transition-all border-physics-500 bg-physics-500/10 text-physics-600 dark:text-physics-400 flex items-center justify-center gap-2 glow-blue';
+                    } else {
+                        btn.className = 'mode-btn p-3.5 rounded-2xl border text-xs sm:text-sm font-semibold transition-all border-slate-200 dark:border-slate-800 hover:border-physics-400 flex items-center justify-center gap-2';
+                    }
+                });
+
+                this.updateCounts();
+            }
+
+            renderChapterOptions() {
+                const container = document.getElementById('chapter-options');
+                if (!container) return;
+                
+                container.innerHTML = this.chapters.map(chap => `
+                    <label onclick="app.setChapter('${chap.id}')" class="chapter-card cursor-pointer p-4 rounded-2xl border transition-all flex items-center justify-between ${this.selectedChapter == chap.id ? 'border-physics-500 bg-physics-500/10 shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:border-physics-400'}">
+                        <div class="flex items-center gap-3">
+                            <input type="radio" name="chapter-select" value="${chap.id}" ${this.selectedChapter == chap.id ? 'checked' : ''} class="w-4 h-4 text-physics-600 focus:ring-physics-500">
+                            <span class="text-xs sm:text-sm font-semibold">${chap.name}</span>
+                        </div>
+                        <span id="chap-count-${chap.id}" class="text-xs px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold">
+                            0 câu
+                        </span>
+                    </label>
+                `).join('');
+            }
+
+            setChapter(chapId) {
+                this.sound.playClick();
+                this.selectedChapter = chapId === 'ALL' ? 'ALL' : parseInt(chapId);
+                this.renderChapterOptions();
+                this.updateCounts();
+            }
+
+            setQuestionCount(count) {
+                this.sound.playClick();
+                this.selectedCount = count;
+                document.querySelectorAll('.count-btn').forEach(btn => {
+                    const btnCount = btn.getAttribute('data-count');
+                    if (btnCount == count) {
+                        btn.className = 'count-btn p-3 rounded-xl border text-sm text-center transition-all border-physics-500 bg-physics-500/10 text-physics-600 dark:text-physics-400 font-bold';
+                    } else {
+                        btn.className = 'count-btn p-3 rounded-xl border text-sm text-center transition-all border-slate-300 dark:border-slate-700 hover:border-physics-400';
+                    }
+                });
+                this.updateCounts();
+            }
+
+            getFilteredPool() {
+                return QUESTION_BANK.filter(q => {
+                    if (this.selectedMode === 'THEORY' && !q.isTheory) return false;
+                    if (this.selectedMode === 'CALC' && q.isTheory) return false;
+                    if (this.selectedChapter !== 'ALL' && q.chapter !== this.selectedChapter) return false;
+                    return true;
+                });
+            }
+
+            updateCounts() {
+                this.chapters.forEach(chap => {
+                    const count = QUESTION_BANK.filter(q => {
+                        if (this.selectedMode === 'THEORY' && !q.isTheory) return false;
+                        if (this.selectedMode === 'CALC' && q.isTheory) return false;
+                        if (chap.id !== 'ALL' && q.chapter !== chap.id) return false;
+                        return true;
+                    }).length;
+
+                    const badge = document.getElementById(`chap-count-${chap.id}`);
+                    if (badge) badge.textContent = `${count} câu`;
+                });
+
+                const currentPool = this.getFilteredPool();
+                const infoBadge = document.getElementById('pool-info-badge');
+                if (infoBadge) infoBadge.textContent = `Khả dụng: ${currentPool.length} câu`;
+
+                const limitText = document.getElementById('active-limit-text');
+                if (limitText) limitText.textContent = `(Khả dụng: ${currentPool.length} câu)`;
+
+                let activeCount = this.selectedCount === 'ALL' ? currentPool.length : Math.min(this.selectedCount, currentPool.length);
+                const btnStartCount = document.getElementById('btn-start-count');
+                if (btnStartCount) btnStartCount.textContent = `${activeCount} câu`;
+            }
+
+            startQuiz() {
+                const pool = this.getFilteredPool();
+                if (pool.length === 0) return;
+
+                const shuffled = [...pool].sort(() => Math.random() - 0.5);
+                const targetCount = this.selectedCount === 'ALL' ? shuffled.length : Math.min(this.selectedCount, shuffled.length);
+                
+                this.currentQuiz = shuffled.slice(0, targetCount);
+                this.currentIndex = 0;
+                this.userAnswers = new Array(this.currentQuiz.length).fill(null);
+                this.correctCount = 0;
+                this.secondsElapsed = 0;
+
+                document.getElementById('view-home').classList.add('hidden');
+                document.getElementById('view-result').classList.add('hidden');
+                document.getElementById('view-quiz').classList.remove('hidden');
+
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                this.timerInterval = setInterval(() => {
+                    this.secondsElapsed++;
+                    const mins = String(Math.floor(this.secondsElapsed / 60)).padStart(2, '0');
+                    const secs = String(this.secondsElapsed % 60).padStart(2, '0');
+                    const timerEl = document.getElementById('quiz-timer');
+                    if (timerEl) timerEl.textContent = `${mins}:${secs}`;
+                }, 1000);
+
+                this.renderQuestion();
+            }
+
+            renderQuestion() {
+                this.hasCheckedCurrent = false;
+                this.selectedOptionIndex = null;
+
+                const q = this.currentQuiz[this.currentIndex];
+
+                document.getElementById('quiz-chapter-tag').textContent = q.chapterName;
+                document.getElementById('current-q-index').textContent = this.currentIndex + 1;
+                document.getElementById('total-q-count').textContent = this.currentQuiz.length;
+                document.getElementById('live-score').textContent = this.correctCount;
+
+                const pct = ((this.currentIndex + 1) / this.currentQuiz.length) * 100;
+                document.getElementById('quiz-progress-bar').style.width = `${pct}%`;
+
+                document.getElementById('question-text').innerHTML = `
+                    <span class="inline-block px-2.5 py-0.5 text-xs font-bold rounded-md ${q.isTheory ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30' : 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'} mr-2 mb-1">
+                        ${q.isTheory ? 'Lý Thuyết' : 'Bài Tập Tính Toán'}
+                    </span>
+                    ${q.question}
+                `;
+
+                const container = document.getElementById('options-container');
+                container.innerHTML = q.options.map((opt, idx) => `
+                    <button type="button" onclick="app.selectOption(${idx})" id="option-btn-${idx}" class="option-card w-full text-left p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-physics-500 bg-white/40 dark:bg-slate-900/40 transition-all text-sm font-medium flex items-center justify-between">
+                        <span>${opt}</span>
+                        <i class="fa-regular fa-circle text-slate-400 text-lg icon-check"></i>
+                    </button>
+                `).join('');
+
+                document.getElementById('btn-submit-answer').classList.remove('hidden');
+                document.getElementById('btn-next-question').classList.add('hidden');
+                document.getElementById('explanation-box').classList.add('hidden');
+
+                this.renderMath(document.getElementById('view-quiz'));
+            }
+
+            selectOption(idx) {
+                if (this.hasCheckedCurrent) return;
+                this.sound.playClick();
+                this.selectedOptionIndex = idx;
+
+                document.querySelectorAll('.option-card').forEach((btn, i) => {
+                    const icon = btn.querySelector('.icon-check');
+                    if (i === idx) {
+                        btn.className = 'option-card w-full text-left p-4 rounded-2xl border-2 border-physics-500 bg-physics-500/10 text-physics-700 dark:text-physics-300 transition-all text-sm font-semibold flex items-center justify-between glow-blue';
+                        icon.className = 'fa-solid fa-circle-dot text-physics-500 text-lg icon-check';
+                    } else {
+                        btn.className = 'option-card w-full text-left p-4 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-physics-500 bg-white/40 dark:bg-slate-900/40 transition-all text-sm font-medium flex items-center justify-between';
+                        icon.className = 'fa-regular fa-circle text-slate-400 text-lg icon-check';
+                    }
+                });
+            }
+
+            checkAnswer() {
+                if (this.selectedOptionIndex === null) return;
+
+                this.hasCheckedCurrent = true;
+                const q = this.currentQuiz[this.currentIndex];
+                const isCorrect = this.selectedOptionIndex === q.correctIndex;
+                this.userAnswers[this.currentIndex] = this.selectedOptionIndex;
+
+                if (isCorrect) {
+                    this.correctCount++;
+                    this.sound.playCorrect();
+                } else {
+                    this.sound.playWrong();
+                }
+
+                document.getElementById('live-score').textContent = this.correctCount;
+
+                document.querySelectorAll('.option-card').forEach((btn, i) => {
+                    const icon = btn.querySelector('.icon-check');
+                    if (i === q.correctIndex) {
+                        btn.className = 'option-card w-full text-left p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold transition-all text-sm flex items-center justify-between glow-green';
+                        icon.className = 'fa-solid fa-circle-check text-emerald-500 text-lg icon-check';
+                    } else if (i === this.selectedOptionIndex && !isCorrect) {
+                        btn.className = 'option-card w-full text-left p-4 rounded-2xl border-2 border-rose-500 bg-rose-500/10 text-rose-700 dark:text-rose-300 font-bold transition-all text-sm flex items-center justify-between glow-red';
+                        icon.className = 'fa-solid fa-circle-xmark text-rose-500 text-lg icon-check';
+                    } else {
+                        btn.className = 'option-card w-full text-left p-4 rounded-2xl border border-slate-200 dark:border-slate-800 opacity-50 bg-white/40 dark:bg-slate-900/40 transition-all text-sm flex items-center justify-between';
+                    }
+                });
+
+                const expBox = document.getElementById('explanation-box');
+                expBox.className = `rounded-2xl p-5 sm:p-6 space-y-4 border transition-all animate-fade-in ${isCorrect ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-rose-500/40 bg-rose-500/5'}`;
+                expBox.classList.remove('hidden');
+
+                const formulaContainer = document.getElementById('formula-container');
+                formulaContainer.innerHTML = `$$${q.formula}$$`;
+
+                const expText = document.getElementById('explanation-text');
+                expText.innerHTML = `
+                    <p class="font-bold ${isCorrect ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}">
+                        ${isCorrect ? '✓ Chính xác!' : '✗ Chưa đúng! Đáp án đúng là ' + q.options[q.correctIndex]}
+                    </p>
+                    <p>${q.explanation}</p>
+                `;
+
+                document.getElementById('btn-submit-answer').classList.add('hidden');
+                document.getElementById('btn-next-question').classList.remove('hidden');
+
+                this.renderMath(expBox);
+            }
+
+            nextQuestion() {
+                this.sound.playClick();
+                if (this.currentIndex < this.currentQuiz.length - 1) {
+                    this.currentIndex++;
+                    this.renderQuestion();
+                } else {
+                    this.finishQuiz();
+                }
+            }
+
+            finishQuiz() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+
+                const total = this.currentQuiz.length;
+                const score10 = ((this.correctCount / total) * 10).toFixed(1);
+
+                document.getElementById('view-quiz').classList.add('hidden');
+                document.getElementById('view-result').classList.remove('hidden');
+
+                document.getElementById('final-score').textContent = score10;
+                document.getElementById('stat-correct').textContent = this.correctCount;
+                document.getElementById('stat-wrong').textContent = total - this.correctCount;
+                document.getElementById('stat-accuracy').textContent = `${Math.round((this.correctCount / total) * 100)}%`;
+
+                const mins = String(Math.floor(this.secondsElapsed / 60)).padStart(2, '0');
+                const secs = String(this.secondsElapsed % 60).padStart(2, '0');
+                document.getElementById('stat-time').textContent = `${mins}:${secs}`;
+
+                const gradeEl = document.getElementById('score-grade');
+                const iconEl = document.getElementById('result-icon');
+
+                if (score10 >= 8.5) {
+                    gradeEl.textContent = 'Xuất Sắc! Đạt Điểm A';
+                    gradeEl.className = 'inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 glow-green';
+                    iconEl.className = 'fa-solid fa-trophy text-amber-400';
+                    this.fireworks.start(5000);
+                } else if (score10 >= 7.0) {
+                    gradeEl.textContent = 'Giỏi - Đạt Điểm B+';
+                    gradeEl.className = 'inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-sky-500/20 text-sky-400 border border-sky-500/30';
+                    iconEl.className = 'fa-solid fa-medal text-sky-400';
+                    this.fireworks.start(2500);
+                } else if (score10 >= 5.0) {
+                    gradeEl.textContent = 'Đạt Yêu Cầu - Cần Ôn Luyện Thêm';
+                    gradeEl.className = 'inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30';
+                    iconEl.className = 'fa-solid fa-award text-amber-400';
+                } else {
+                    gradeEl.textContent = 'Chưa Đạt - Hãy Ôn Kỹ Lại Lý Thuyết';
+                    gradeEl.className = 'inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/30';
+                    iconEl.className = 'fa-solid fa-circle-exclamation text-rose-400';
+                }
+
+                this.renderReviewList('all');
+            }
+
+            renderReviewList(filterType = 'all') {
+                const container = document.getElementById('review-container');
+                if (!container) return;
+
+                let filteredItems = this.currentQuiz.map((q, idx) => ({
+                    question: q,
+                    userAns: this.userAnswers[idx],
+                    index: idx
+                }));
+
+                if (filterType === 'wrong') {
+                    filteredItems = filteredItems.filter(item => item.userAns !== item.question.correctIndex);
+                }
+
+                if (filteredItems.length === 0) {
+                    container.innerHTML = `<div class="text-center py-8 text-slate-400 font-medium">Không có câu hỏi nào trong danh mục này!</div>`;
+                    return;
+                }
+
+                container.innerHTML = filteredItems.map(item => {
+                    const q = item.question;
+                    const isCorrect = item.userAns === q.correctIndex;
+                    const userChoiceText = item.userAns !== null ? q.options[item.userAns] : "Chưa trả lời";
+
+                    return `
+                        <div class="glass-card p-5 sm:p-6 rounded-2xl border ${isCorrect ? 'border-emerald-500/30' : 'border-rose-500/30'} space-y-4">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="font-bold text-sm sm:text-base leading-relaxed">
+                                    <span class="text-physics-500">Câu ${item.index + 1}:</span> ${q.question}
+                                </h4>
+                                <span class="shrink-0 px-3 py-1 rounded-full text-xs font-bold ${isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
+                                    ${isCorrect ? 'Đúng' : 'Sai'}
+                                </span>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                <div class="p-3 rounded-xl ${isCorrect ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}">
+                                    <strong>Lựa chọn của bạn:</strong> ${userChoiceText}
+                                </div>
+                                <div class="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    <strong>Đáp án đúng:</strong> ${q.options[q.correctIndex]}
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-900/90 text-sky-300 text-xs font-mono border border-sky-500/30">
+                                $$${q.formula}$$
+                            </div>
+
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                <strong class="text-amber-500">Giải thích:</strong> ${q.explanation}
+                            </p>
+                        </div>
+                    `;
+                }).join('');
+
+                this.renderMath(container);
+            }
+
+            filterReview(type) {
+                this.sound.playClick();
+                const btnAll = document.getElementById('filter-all');
+                const btnWrong = document.getElementById('filter-wrong');
+                if (type === 'all') {
+                    btnAll.className = 'px-3 py-1 rounded-lg bg-physics-500 text-white font-semibold';
+                    btnWrong.className = 'px-3 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-rose-500 hover:text-white transition-all font-semibold';
+                } else {
+                    btnWrong.className = 'px-3 py-1 rounded-lg bg-rose-500 text-white font-semibold';
+                    btnAll.className = 'px-3 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-physics-500 hover:text-white transition-all font-semibold';
+                }
+                this.renderReviewList(type);
+            }
+
+            retakeQuiz() {
+                this.startQuiz();
+            }
+
+            navHome() {
+                this.sound.playClick();
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                document.getElementById('view-quiz').classList.add('hidden');
+                document.getElementById('view-result').classList.add('hidden');
+                document.getElementById('view-home').classList.remove('hidden');
+                this.updateCounts();
+            }
+        }
+
+        // Global Initialization
+        app = new PhysicsApp();
+        window.app = app;
+
+        function startApp() {
+            if (app) app.init();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startApp);
+        } else {
+            startApp();
+        }
+    </script>
+</body>
+</html>
